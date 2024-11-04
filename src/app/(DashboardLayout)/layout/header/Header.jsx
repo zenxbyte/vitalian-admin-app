@@ -13,7 +13,8 @@ import PropTypes from "prop-types";
 import Link from "next/link";
 // components
 import Profile from "./Profile";
-import { IconBellRinging, IconMenu } from "@tabler/icons-react";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Header = ({ toggleMobileSidebar }) => {
   // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
@@ -42,12 +43,11 @@ const Header = ({ toggleMobileSidebar }) => {
           onClick={toggleMobileSidebar}
           sx={{
             display: {
-              lg: "none",
               xs: "inline",
             },
           }}
         >
-          <IconMenu width="20" height="20" />
+          <MenuIcon width="20" height="20" />
         </IconButton>
 
         <IconButton
@@ -58,7 +58,7 @@ const Header = ({ toggleMobileSidebar }) => {
           aria-haspopup="true"
         >
           <Badge variant="dot" color="primary">
-            <IconBellRinging size="21" stroke="1.5" />
+            <NotificationsActiveIcon size="21" stroke="1.5" />
           </Badge>
         </IconButton>
         <Box flexGrow={1} />

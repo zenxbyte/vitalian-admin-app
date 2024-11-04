@@ -49,7 +49,7 @@ const NavItem = ({ item, level, pathDirect, onClick }) => {
           href={item.href}
           disabled={item.disabled}
           selected={pathDirect === item.href}
-          target={item.external ? "_blank" : ""}
+          //target={item.external ? "_blank" : ""}
           onClick={onClick}
         >
           <ListItemIcon

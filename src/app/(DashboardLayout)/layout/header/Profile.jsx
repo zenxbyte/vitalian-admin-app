@@ -11,7 +11,9 @@ import {
   ListItemText,
 } from "@mui/material";
 
-import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import MailIcon from "@mui/icons-material/Mail";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -65,19 +67,19 @@ const Profile = () => {
       >
         <MenuItem>
           <ListItemIcon>
-            <IconUser width={20} />
+            <AccountCircleIcon width={20} />
           </ListItemIcon>
           <ListItemText>My Profile</ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemIcon>
-            <IconMail width={20} />
+            <MailIcon width={20} />
           </ListItemIcon>
           <ListItemText>My Account</ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemIcon>
-            <IconListCheck width={20} />
+            <ChecklistIcon width={20} />
           </ListItemIcon>
           <ListItemText>My Tasks</ListItemText>
         </MenuItem>

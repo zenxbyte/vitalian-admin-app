@@ -2,7 +2,7 @@
 import { styled, Container, Box } from "@mui/material";
 import React, { useState } from "react";
 import Header from "@/app/(DashboardLayout)/layout/header/Header";
-import Sidebar from "@/app/(DashboardLayout)/layout/sidebar/Sidebar";
+import SideBar from "./layout/sidebar/Sidebar";
 
 const MainWrapper = styled("div")(() => ({
   display: "flex",
@@ -22,16 +22,22 @@ const PageWrapper = styled("div")(() => ({
 export default function RootLayout({ children }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <MainWrapper className="mainwrapper">
       {/* ------------------------------------------- */}
       {/* Sidebar */}
       {/* ------------------------------------------- */}
-      <Sidebar
+      <SideBar isOpen={isSidebarOpen} toggleDrawer={toggleDrawer} />
+      {/* <Sidebar
         isSidebarOpen={isSidebarOpen}
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
-      />
+      /> */}
       {/* ------------------------------------------- */}
       {/* Main Wrapper */}
       {/* ------------------------------------------- */}
@@ -39,7 +45,7 @@ export default function RootLayout({ children }) {
         {/* ------------------------------------------- */}
         {/* Header */}
         {/* ------------------------------------------- */}
-        <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+        <Header toggleMobileSidebar={toggleDrawer} />
         {/* ------------------------------------------- */}
         {/* PageContent */}
         {/* ------------------------------------------- */}

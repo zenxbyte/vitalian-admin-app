@@ -1,18 +1,15 @@
-import { IconLayoutDashboard } from "@tabler/icons-react";
-
-import { uniqueId } from "lodash";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import { NAVIGATION_ROUTES } from "../../../../navigation/navigationRoutes";
 
 const Menuitems = [
   {
     navlabel: true,
     subheader: "Home",
   },
-
   {
-    id: uniqueId(),
     title: "Dashboard",
-    icon: IconLayoutDashboard,
-    href: "/",
+    icon: DashboardIcon,
+    href: NAVIGATION_ROUTES.dashboard,
   },
 ];
 
