@@ -14,14 +14,24 @@ import {
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import MailIcon from "@mui/icons-material/Mail";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Cookies from "js-cookie";
+import { COOKIES } from "@/constants/cookie_constants";
+import { useRouter } from "next/navigation";
 
 const Profile = () => {
+  const router = useRouter();
+
   const [anchorEl2, setAnchorEl2] = useState(null);
   const handleClick2 = (event) => {
     setAnchorEl2(event.currentTarget);
   };
   const handleClose2 = () => {
     setAnchorEl2(null);
+  };
+
+  const handleLogout = () => {
+    Cookies.remove(COOKIES.IS_LOGGEDIN);
+    router.replace("/login");
   };
 
   return (
@@ -85,10 +95,9 @@ const Profile = () => {
         </MenuItem>
         <Box mt={1} py={1} px={2}>
           <Button
-            href="/authentication/login"
             variant="outlined"
             color="primary"
-            component={Link}
+            onClick={handleLogout}
             fullWidth
           >
             Logout

@@ -1,5 +1,8 @@
 export const NAVIGATION_ROUTES = {
   dashboard: {
-    base: "/",
+    base: "/dashboard",
+  },
+  products: {
+    base: "/products",
   },
 };
