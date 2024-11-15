@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useSnackbar } from "notistack";
-import useSnackbarStore from "@/store/notification-store";
+import useSnackbarStore from "../store/notification-store";
 
 let displayed = [];
 
 const SnackbarNotifier = () => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const notifications = useSnackbarStore((state) => state.notifications);
   const removeSnackbar = useSnackbarStore((state) => state.removeSnackbar);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const storeDisplayed = (id) => {
     displayed = [...displayed, id];
@@ -21,15 +21,15 @@ const SnackbarNotifier = () => {
     notifications.forEach(
       ({ key, message, options = {}, dismissed = false }) => {
         if (dismissed) {
-          // dismiss snackbar using notistack
+          // Dismiss snackbar using notistack
           closeSnackbar(key);
           return;
         }
 
-        // do nothing if snackbar is already displayed
+        // Do nothing if snackbar is already displayed
         if (displayed.includes(key)) return;
 
-        // display snackbar using notistack
+        // Display snackbar using notistack
         enqueueSnackbar(message, {
           key,
           ...options,
@@ -39,13 +39,13 @@ const SnackbarNotifier = () => {
             }
           },
           onExited: (event, myKey) => {
-            // remove this snackbar from Zustand store
+            // Remove this snackbar from Zustand store
             removeSnackbar(myKey);
             removeDisplayed(myKey);
           },
         });
 
-        // keep track of snackbars that we've displayed
+        // Keep track of displayed snackbars
         storeDisplayed(key);
       }
     );

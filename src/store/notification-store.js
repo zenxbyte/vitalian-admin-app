@@ -3,19 +3,26 @@ import { create } from "zustand";
 const useSnackbarStore = create((set) => ({
   notifications: [],
 
-  // Action to add a new snackbar notification
   enqueueSnackbar: (notification) =>
     set((state) => ({
       notifications: [
         ...state.notifications,
         {
-          key: notification.key || new Date().getTime(),
+          key: new Date().getTime(), // Generate a unique key if none is provided
           ...notification,
         },
       ],
     })),
 
-  // Action to remove a snackbar by key
+  closeSnackbar: (key, dismissAll = false) =>
+    set((state) => ({
+      notifications: state.notifications.map((notification) =>
+        dismissAll || notification.key === key
+          ? { ...notification, dismissed: true }
+          : notification
+      ),
+    })),
+
   removeSnackbar: (key) =>
     set((state) => ({
       notifications: state.notifications.filter(

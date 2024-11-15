@@ -5,4 +5,8 @@ export const NAVIGATION_ROUTES = {
   products: {
     base: "/products",
   },
+  item: {
+    base: "/item",
+    id: "/item?id=",
+  },
 };

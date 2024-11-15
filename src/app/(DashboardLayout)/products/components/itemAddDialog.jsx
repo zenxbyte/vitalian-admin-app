@@ -1,0 +1,268 @@
+import React, { Fragment, useState } from "react";
+
+import {
+  AppBar,
+  Box,
+  Button,
+  Container,
+  Dialog,
+  IconButton,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
+  InputAdornment,
+  TextField,
+  Toolbar,
+  Typography,
+  Slide,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
+  FormGroup,
+} from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import CloseIcon from "@mui/icons-material/Close";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+
+import { CurrencyInput } from "@/components/currency-input/currency-input";
+import DropFileContainer from "@/components/DropFileContainer/dropFileContainer";
+import { COLORS } from "@/constants/colors-constatns";
+import { SIZES } from "@/constants/size-constants";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export const ItemAddDialog = ({
+  isOpen,
+  handleClose,
+  images,
+  setImages,
+  formik,
+  isLoading,
+  handleSubmit,
+}) => {
+  const { touched, errors, getFieldProps, value } = formik;
+
+  const [isOpenImgDlg, setIsOpenImgDlg] = useState(false);
+
+  const handleAddImage = (newImage) => {
+    setImages((prevImages) => [...prevImages, newImage]);
+  };
+
+  const handleRemoveImages = (index) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const handleOpenCloseImgDialog = () => {
+    setIsOpenImgDlg(!isOpenImgDlg);
+  };
+  return (
+    <Fragment>
+      <Dialog
+        fullScreen
+        open={isOpen}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+      >
+        <AppBar sx={{ position: "relative" }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleClose}
+              disabled={isLoading}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              Add Item
+            </Typography>
+            <Button
+              autoFocus
+              color="inherit"
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              save
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <Container sx={{ mt: "20px", mb: "50px" }}>
+          <Grid container spacing={4}>
+            <Grid size={{ xs: 12, md: 12 }}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="h6">Item Images</Typography>
+                <Button
+                  variant="contained"
+                  disabled={images.length === 5}
+                  startIcon={<AddPhotoAlternateIcon />}
+                  onClick={handleOpenCloseImgDialog}
+                >
+                  Add
+                </Button>
+              </Box>
+            </Grid>
+            {images.length > 0 && (
+              <Grid size={{ xs: 12, md: 12 }}>
+                <ImageList sx={{ height: 320 }} cols={5}>
+                  {images.map((item, index) => (
+                    <ImageListItem key={index}>
+                      <img src={item.fileUrl} alt={"Image"} loading="lazy" />
+                      <ImageListItemBar
+                        sx={{
+                          background:
+                            "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+                            "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
+                        }}
+                        title={item.title}
+                        position="top"
+                        actionIcon={
+                          <IconButton
+                            sx={{ color: "white" }}
+                            onClick={() => handleRemoveImages(index)}
+                          >
+                            <CancelIcon />
+                          </IconButton>
+                        }
+                        actionPosition="left"
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+              </Grid>
+            )}
+
+            <Grid size={{ xs: 12, md: 12 }}>
+              <Typography variant="h6">Item Details</Typography>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemTitle"
+                label="Item Title"
+                required
+                fullWidth
+                {...getFieldProps("itemTitle")}
+                error={Boolean(touched.itemTitle && errors.itemTitle)}
+                helperText={touched.itemTitle && errors.itemTitle}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemDescription"
+                label="Item Description"
+                fullWidth
+                {...getFieldProps("itemDescription")}
+                error={Boolean(
+                  touched.itemDescription && errors.itemDescription
+                )}
+                helperText={touched.itemDescription && errors.itemDescription}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <CurrencyInput
+                label="Item Price"
+                name="itemPrice"
+                fullWidth
+                required
+                autoComplete="off"
+                variant="outlined"
+                {...getFieldProps("itemPrice")}
+                error={Boolean(touched.itemPrice && errors.itemPrice)}
+                helperText={touched.itemPrice && errors.itemPrice}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <TextField
+                label="Discount"
+                name="itemDiscount"
+                type="number"
+                fullWidth
+                slotProps={{
+                  input: {
+                    slotProps: {
+                      max: 100, // Sets the maximum value to 100
+                      min: 0,
+                    },
+                    startAdornment: (
+                      <InputAdornment position="end">% </InputAdornment>
+                    ),
+                  },
+                }}
+                {...getFieldProps("itemDiscount")}
+                error={Boolean(touched.itemDiscount && errors.itemDiscount)}
+                helperText={touched.itemDiscount && errors.itemDiscount}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <FormControl fullWidth>
+                <InputLabel id="color-select">Color</InputLabel>
+                <Select
+                  labelId="color-select"
+                  id="color-select"
+                  name="itemColor"
+                  label="Color"
+                  {...getFieldProps("itemColor")}
+                >
+                  {COLORS.map((color, index) => (
+                    <MenuItem key={index} value={color.key}>
+                      {color.key}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 }}>
+              <Typography variant="h6">Size Variants</Typography>
+            </Grid>
+            {SIZES.map((item, index) => (
+              <Grid key={index} size={{ xs: 12, md: 3 }}>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  gap={2}
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <FormGroup>
+                    <FormControlLabel
+                      control={<Checkbox defaultChecked />}
+                      label={item.value}
+                      {...getFieldProps(`${item.value.toLowerCase()}Available`)}
+                    />
+                  </FormGroup>
+                  <TextField
+                    name={`${item.value.toLowerCase()}Quantity`}
+                    label="Stock Quantity"
+                    type="number"
+                    fullWidth
+                    {...getFieldProps(`${item.value.toLowerCase()}Quantity`)}
+                    error={Boolean(touched.Quantity && errors.Quantity)}
+                    helperText={touched.Quantity && errors.Quantity}
+                  />
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Dialog>
+      {isOpenImgDlg && (
+        <DropFileContainer
+          open={isOpenImgDlg}
+          onClose={handleOpenCloseImgDialog}
+          onSave={handleAddImage}
+        />
+      )}
+    </Fragment>
+  );
+};

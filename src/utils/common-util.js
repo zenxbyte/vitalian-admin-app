@@ -4,7 +4,7 @@
  * @returns {boolean}
  */
 const isUndefinedOrNull = (value) => {
-  return typeof value === 'undefined' || value === null;
+  return typeof value === "undefined" || value === null;
 };
 
 /**
@@ -76,6 +76,11 @@ const isToday = (givenDate) => {
   );
 };
 
+const blobToFile = (blob, fileName, originalFileType = "image/jpeg") => {
+  // Create a File object from the Blob
+  return new File([blob], fileName, { type: originalFileType });
+};
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   isUndefinedOrNull,
@@ -85,4 +90,5 @@ export default {
   calculateMonthDifference,
   validateFormik,
   isToday,
+  blobToFile,
 };

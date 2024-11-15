@@ -7,6 +7,7 @@ const Loading = () => {
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      gap={4}
       sx={{
         position: "absolute",
         top: "50%",
@@ -16,7 +17,7 @@ const Loading = () => {
         minHeight: "100%",
       }}
     >
-      <CircularProgress size={60} />
+      <CircularProgress size={40} />
       <Typography variant="h6">Loading..</Typography>
     </Box>
   );

@@ -1,9 +1,364 @@
 "use client";
 
-const { ProductsView } = require("../view/products-view");
+import { useEffect, useState } from "react";
+import axios from "axios";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
+
+import { BACKEND_API } from "@/axios/constant/backend-api";
+import { backendAuthApi } from "@/axios/instance/backend-axios-instance";
+import responseUtil from "@/utils/responseUtil";
+import commonUtil from "@/utils/common-util";
+import { useSnackbar } from "notistack";
+import { NAVIGATION_ROUTES } from "@/navigation/navigationRoutes";
+import { ProductsView } from "../view/products-view";
+
+const validationSchemaCreate = Yup.object().shape({
+  catName: Yup.string().required("Category Name is required"),
+  catDescription: Yup.string(),
+});
+
+const validationSchemaUpdate = Yup.object().shape({
+  catName: Yup.string().required("Category Name is required"),
+  catDescription: Yup.string(),
+  catIsActive: Yup.boolean().default(true).required(),
+});
+
+const validationSchemaItem = Yup.object({
+  itemTitle: Yup.string().required("Item title is required"),
+  itemDescription: Yup.string(),
+  itemPrice: Yup.number()
+    .required("Item price is required")
+    .min(0, "Price cannot be negative"),
+  itemDiscount: Yup.number()
+    .min(0, "Discount cannot be negative")
+    .max(100, "Discount cannot be greater than 100"),
+  itemColor: Yup.string().required("Item color is required"),
+
+  // Validate itemSizeVariants as individual fields for each size
+  xsAvailable: Yup.boolean(),
+  xsQuantity: Yup.number().min(0, "Quantity cannot be negative"),
+  sAvailable: Yup.boolean(),
+  sQuantity: Yup.number().min(0, "Quantity cannot be negative"),
+  mAvailable: Yup.boolean(),
+  mQuantity: Yup.number().min(0, "Quantity cannot be negative"),
+  lAvailable: Yup.boolean(),
+  lQuantity: Yup.number().min(0, "Quantity cannot be negative"),
+  xlAvailable: Yup.boolean(),
+  xlQuantity: Yup.number().min(0, "Quantity cannot be negative"),
+  xxlAvailable: Yup.boolean(),
+  xxlQuantity: Yup.number().min(0, "Quantity cannot be negative"),
+});
 
 const ProductsController = () => {
-  return <ProductsView />;
+  const { enqueueSnackbar } = useSnackbar();
+
+  const router = useRouter();
+  const cancelToken = axios.CancelToken.source();
+
+  const [page, setPage] = useState(0);
+  const [documentCount, setDocumentCount] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [categories, setCategories] = useState([]);
+  const [items, setItems] = useState([]);
+  const [selectedCat, setSelectedCat] = useState(null);
+  const [images, setImages] = useState([]);
+
+  const [isOpenCatAddDialog, setIsOpenCatAddDialog] = useState(false);
+  const [isOpenCatUpdateDialog, setIsOpenCatUpdateDialog] = useState(false);
+  const [isOpenAddItemDialog, setIsOpenAddItemDialog] = useState(false);
+
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+  const [isLoadingAddCat, setIsLoadingAddCat] = useState(false);
+  const [isLoadingUpdateCat, setIsLoadingUpdateCat] = useState(false);
+  const [isLoadingAddItem, setIsLoadingAddItem] = useState(false);
+  const [isLoadingItems, setIsLoadingItems] = useState(false);
+
+  const formikCreate = useFormik({
+    initialValues: {
+      catName: "",
+      catDescription: "",
+    },
+    validationSchema: validationSchemaCreate,
+    onSubmit: () => {
+      null;
+    },
+  });
+
+  const formikUpdate = useFormik({
+    initialValues: {
+      catName: "",
+      catDescription: "",
+      catIsActive: true,
+    },
+    validationSchema: validationSchemaUpdate,
+    onSubmit: () => {
+      null;
+    },
+  });
+
+  const formikAddItem = useFormik({
+    initialValues: {
+      itemTitle: "",
+      itemDescription: "",
+      itemPrice: 0,
+      itemDiscount: 0,
+      itemColor: "Red",
+      xsAvailable: true,
+      xsQuantity: 0,
+      sAvailable: true,
+      sQuantity: 0,
+      mAvailable: true,
+      mQuantity: 0,
+      lAvailable: true,
+      lQuantity: 0,
+      xlAvailable: true,
+      xlQuantity: 0,
+      xxlAvailable: true,
+      xxlQuantity: 0,
+    },
+    validationSchema: validationSchemaItem,
+    onSubmit: () => {
+      null;
+    },
+  });
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
+
+  const handleOpenCloseCatDialog = () => {
+    if (isOpenCatAddDialog) {
+      formikCreate.resetForm();
+    }
+    setIsOpenCatAddDialog(!isOpenCatAddDialog);
+  };
+
+  const handleOpenCloseUpdateCatDialog = () => {
+    if (isOpenCatUpdateDialog) {
+      formikUpdate.resetForm();
+    } else {
+      formikUpdate.setValues({
+        catName: selectedCat.catName,
+        catDescription: selectedCat.catDescription,
+      });
+    }
+    setIsOpenCatUpdateDialog(!isOpenCatUpdateDialog);
+  };
+
+  const handleOpenCloseAddItemDialog = () => {
+    if (isOpenAddItemDialog) {
+      formikAddItem.resetForm();
+      setImages([]);
+    }
+    setIsOpenAddItemDialog(!isOpenAddItemDialog);
+  };
+
+  const handleSelectCat = (key) => {
+    if (selectedCat && selectedCat._id === key) {
+      setSelectedCat(null);
+    } else {
+      setSelectedCat(categories.find((cat) => cat._id === key));
+    }
+  };
+
+  const handleClickItemRow = (id) => {
+    router.push(NAVIGATION_ROUTES.item.id + id);
+  };
+
+  const handleAddNewCategory = async () => {
+    commonUtil.validateFormik(formikCreate);
+
+    if (formikCreate.isValid && formikCreate.dirty) {
+      setIsLoadingAddCat(true);
+
+      await backendAuthApi({
+        url: BACKEND_API.PRODUCT_CAT_CREATE,
+        method: "POST",
+        cancelToken: cancelToken.token,
+        data: formikCreate.values,
+      })
+        .then((res) => {
+          if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+            handleOpenCloseCatDialog();
+            fetchCategories();
+          }
+        })
+        .catch(() => {
+          setIsLoadingAddCat(false);
+        })
+        .finally(() => {
+          setIsLoadingAddCat(false);
+        });
+    }
+  };
+
+  const handleUpdateCategory = async () => {
+    commonUtil.validateFormik(formikUpdate);
+    if (formikUpdate.isValid && formikUpdate.dirty) {
+      setIsLoadingUpdateCat(true);
+      await backendAuthApi({
+        url: BACKEND_API.PRODUCT_CAT_UPDATE + selectedCat._id,
+        method: "PUT",
+        cancelToken: cancelToken.token,
+        data: formikUpdate.values,
+      })
+        .then((res) => {
+          if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+            handleOpenCloseUpdateCatDialog();
+            fetchCategories();
+          }
+          enqueueSnackbar(res.data.responseMessage, {
+            variant: responseUtil.findResponseType(res.data.responseCode),
+          });
+        })
+        .catch(() => {
+          setIsLoadingUpdateCat(false);
+        })
+        .finally(() => {
+          setIsLoadingUpdateCat(false);
+        });
+    }
+  };
+
+  const handleAddItem = async () => {
+    commonUtil.validateFormik(formikAddItem);
+
+    if (formikAddItem.isValid && formikAddItem.dirty) {
+      setIsLoadingAddItem(true);
+
+      const data = new FormData();
+      images.map((item) => {
+        data.append("file", item.file);
+      });
+      const body = JSON.stringify(formikAddItem.values);
+      data.append("data", body);
+
+      await backendAuthApi({
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        url: BACKEND_API.ITEM_ADD + selectedCat._id,
+        method: "POST",
+        cancelToken: cancelToken.token,
+        data: data,
+      })
+        .then((res) => {
+          if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+            handleOpenCloseAddItemDialog();
+          }
+        })
+        .catch(() => {
+          setIsLoadingAddItem(false);
+        })
+        .finally(() => {
+          setIsLoadingAddItem(false);
+        });
+    }
+  };
+
+  const fetchItems = async () => {
+    if (selectedCat) {
+      setIsLoadingItems(true);
+
+      await backendAuthApi({
+        url: BACKEND_API.ITEM_GET_BY_CAT + selectedCat._id,
+        method: "GET",
+        cancelToken: cancelToken.token,
+        params: {
+          page: page,
+          limit: rowsPerPage,
+        },
+      })
+        .then((res) => {
+          if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+            setItems(res.data.responseData.result);
+            setDocumentCount(res.data.responseData.count);
+          }
+        })
+        .catch(() => {
+          setIsLoadingItems(false);
+        })
+        .finally(() => {
+          setIsLoadingItems(false);
+        });
+    }
+  };
+
+  const fetchCategories = async () => {
+    setIsLoadingCategories(true);
+
+    await backendAuthApi({
+      url: BACKEND_API.PRODUCT_CAT_GET,
+      method: "GET",
+      cancelToken: cancelToken.token,
+    })
+      .then((res) => {
+        if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+          setCategories(res.data.responseData);
+        }
+      })
+      .catch((e) => {
+        setIsLoadingCategories(false);
+      })
+      .finally(() => {
+        setIsLoadingCategories(false);
+      });
+  };
+
+  useEffect(() => {
+    if (selectedCat) {
+      fetchItems();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCat, rowsPerPage, page]);
+
+  useEffect(() => {
+    fetchCategories();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <ProductsView
+      categories={categories}
+      isLoadingCategories={isLoadingCategories}
+      selectedCat={selectedCat}
+      handleSelectCat={handleSelectCat}
+      images={images}
+      setImages={setImages}
+      formikCreate={formikCreate}
+      formikUpdate={formikUpdate}
+      formikAddItem={formikAddItem}
+      isOpenCatAddDialog={isOpenCatAddDialog}
+      isOpenCatUpdateDialog={isOpenCatUpdateDialog}
+      isOpenAddItemDialog={isOpenAddItemDialog}
+      handleOpenCloseCatDialog={handleOpenCloseCatDialog}
+      handleOpenCloseUpdateCatDialog={handleOpenCloseUpdateCatDialog}
+      handleOpenCloseAddItemDialog={handleOpenCloseAddItemDialog}
+      isLoadingAddCat={isLoadingAddCat}
+      isLoadingUpdateCat={isLoadingUpdateCat}
+      isLoadingAddItem={isLoadingAddItem}
+      handleAddNewCategory={handleAddNewCategory}
+      handleUpdateCategory={handleUpdateCategory}
+      handleAddItem={handleAddItem}
+      items={items}
+      isLoadingItems={isLoadingItems}
+      handleClickItemRow={handleClickItemRow}
+      page={page}
+      documentCount={documentCount}
+      rowsPerPage={rowsPerPage}
+      handleChangePage={handleChangePage}
+      handleChangeRowsPerPage={handleChangeRowsPerPage}
+    />
+  );
 };
 
 export default ProductsController;

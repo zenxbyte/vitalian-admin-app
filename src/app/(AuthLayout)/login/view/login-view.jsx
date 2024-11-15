@@ -7,7 +7,7 @@ import Logo from "@/layouts/shared/logo/Logo";
 import PageContainer from "@/components/container/PageContainer";
 import AuthLogin from "../component/AuthLogin";
 
-export const LoginView = ({ handleLogin }) => {
+export const LoginView = ({ formik, isLoading, handleLogin }) => {
   return (
     <PageContainer title="Login" description="this is Login page">
       <Box
@@ -32,7 +32,7 @@ export const LoginView = ({ handleLogin }) => {
           sx={{ height: "100vh" }}
         >
           <Grid
-            size={{ xs: 12, md: 3 }}
+            size={{ xs: 12, md: 4 }}
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -56,6 +56,8 @@ export const LoginView = ({ handleLogin }) => {
                   </Typography>
                 }
                 handleLogin={handleLogin}
+                isLoading={isLoading}
+                formik={formik}
               />
             </Card>
           </Grid>

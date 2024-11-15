@@ -14,14 +14,20 @@ import { LoginView } from "../view/login-view";
 import commonUtil from "@/utils/common-util";
 import { backendAuthApi } from "@/axios/instance/backend-axios-instance";
 import { BACKEND_API } from "@/axios/constant/backend-api";
+import { useSnackbar } from "notistack";
+import useAuthStore from "@/store/auth-store";
+import responseUtil from "@/utils/responseUtil";
 
 const validationSchema = Yup.object().shape({
-  empUserName: Yup.string().required("User Name is required"),
-  empPassword: Yup.string().required("Password is required"),
+  userEmail: Yup.string().email().required("User email is required"),
+  userPassword: Yup.string().required("Password is required"),
 });
 
 const LoginController = () => {
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const { loginUser } = useAuthStore();
 
   let cancelToken = axios.CancelToken.source();
 
@@ -29,7 +35,7 @@ const LoginController = () => {
 
   const formik = useFormik({
     initialValues: {
-      userName: "",
+      userEmail: "",
       userPassword: "",
     },
     validationSchema: validationSchema,
@@ -38,34 +44,33 @@ const LoginController = () => {
     },
   });
 
-  const handleLogin = () => {
-    console.log("clicked");
+  const handleLogin = async () => {
+    commonUtil.validateFormik(formik);
+    if (formik.isValid && formik.dirty) {
+      setIsLoading(true);
 
-    Cookies.set(COOKIES.IS_LOGGEDIN, true);
-    router.push(NAVIGATION_ROUTES.dashboard.base);
-    // commonUtil.validateFormik(formik);
-    // if (formik.isValid && formik.dirty) {
-    //   setIsLoading(true);
-
-    //   await backendAuthApi({
-    //     url: BACKEND_API.LOGIN,
-    //     method: "POST",
-    //     cancelToken: cancelToken.token,
-    //     data: formik.values,
-    //   })
-    //     .then((res) => {
-    //       if (responseUtil.isResponseSuccess(res.data.responseCode)) {
-    //         Cookies.set(COOKIES.IS_LOGGEDIN, true);
-    //         router.push(NAVIGATION_ROUTES.dashboard.base);
-    //       }
-    //     })
-    //     .catch(() => {
-    //       setIsLoading(false);
-    //     })
-    //     .then(() => {
-    //       setIsLoading(false);
-    //     });
-    //}
+      await backendAuthApi({
+        url: BACKEND_API.LOGIN,
+        method: "POST",
+        cancelToken: cancelToken.token,
+        data: formik.values,
+      })
+        .then((res) => {
+          if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+            loginUser(res.data.responseData);
+            Cookies.set(COOKIES.IS_LOGGEDIN, true);
+            router.push(NAVIGATION_ROUTES.dashboard.base);
+          }
+        })
+        .catch(() => {
+          setIsLoading(false);
+        })
+        .then(() => {
+          setIsLoading(false);
+        });
+    } else {
+      console.log("not valid");
+    }
   };
   return (
     <LoginView
