@@ -4,6 +4,7 @@ import React from "react";
 import {
   Box,
   Breadcrumbs,
+  Button,
   CardMedia,
   Chip,
   Link,
@@ -23,14 +24,21 @@ import PageContainer from "@/components/container/PageContainer.jsx";
 import Loading from "@/app/loading.jsx";
 import { formatCurrency } from "@/utils/format-number";
 import { COLORS } from "@/constants/colors-constatns";
-import { CustomTableHead } from "@/components/custom-table/custom-table-head";
 import { SizeComponent } from "../component/sizeComponent";
+import { ItemUpdateDialog } from "../component/itemUpdateDialog";
 
 export const ItemView = ({
+  formik,
   isLoading,
   data,
+  images,
+  setImages,
   selectedImage,
   handleImageClick,
+  isOpenUpdateDialog,
+  handleOpenCloseItemUpdateDialog,
+  handleUpdateItem,
+  isLoadingUpdate,
 }) => {
   const matchDownSM = useMediaQuery((theme) => theme.breakpoints.down("sm"));
   return (
@@ -39,7 +47,7 @@ export const ItemView = ({
         <Loading />
       ) : (
         <Grid container spacing={4}>
-          <Grid size={{ xs: 12, sm: 12 }}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Breadcrumbs aria-label="breadcrumb" separator="›">
               <Link underline="hover" color="inherit" href="/products">
                 Products
@@ -48,6 +56,21 @@ export const ItemView = ({
                 Item {!isLoading && `[ ${data.itemTitle} ]`}
               </Typography>
             </Breadcrumbs>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              <Button
+                variant="outlined"
+                onClick={handleOpenCloseItemUpdateDialog}
+              >
+                Update Item
+              </Button>
+            </Box>
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <Grid container spacing={2}>
@@ -110,6 +133,13 @@ export const ItemView = ({
                 <Typography variant="h6">{data.itemDescription}</Typography>
               )}
               <Box display="flex" flexDirection="row">
+                <Typography variant="subtitle1">Item Status</Typography>
+                <Box flexGrow={1} />
+                <Typography variant="subtitle1">
+                  {data.itemIsActive ? "Active" : "Not Active"}
+                </Typography>
+              </Box>
+              <Box display="flex" flexDirection="row">
                 <Typography variant="subtitle1">Price</Typography>
                 <Box flexGrow={1} />
                 <Typography variant="subtitle1">
@@ -138,12 +168,96 @@ export const ItemView = ({
                   }}
                 />
               </Box>
+              <Typography variant="h6">Other Information</Typography>
+              {data.itemInformation.material && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Material</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.material}
+                  </Typography>
+                </Box>
+              )}
+              {data.itemInformation.color && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Color</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.color}
+                  </Typography>
+                </Box>
+              )}
+              {data.itemInformation.fitType && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Fit Type</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.fitType}
+                  </Typography>
+                </Box>
+              )}
+              {data.itemInformation.stretch && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Stretch</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.stretch}
+                  </Typography>
+                </Box>
+              )}
+              {data.itemInformation.style && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Style</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.style}
+                  </Typography>
+                </Box>
+              )}
+              {data.itemInformation.accessories && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Accessories</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.accessories}
+                  </Typography>
+                </Box>
+              )}
+              {data.itemInformation.modelSize && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Model Size</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.modelSize}
+                  </Typography>
+                </Box>
+              )}
+              {data.itemInformation.washAndCare && (
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Typography variant="subtitle1">Wash & Care</Typography>
+                  <Box flexGrow={1} />
+                  <Typography variant="subtitle1">
+                    {data.itemInformation.washAndCare}
+                  </Typography>
+                </Box>
+              )}
             </Box>
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <SizeComponent data={data} />
           </Grid>
         </Grid>
+      )}
+      {isOpenUpdateDialog && (
+        <ItemUpdateDialog
+          formik={formik}
+          isOpen={isOpenUpdateDialog}
+          handleClose={handleOpenCloseItemUpdateDialog}
+          images={images}
+          setImages={setImages}
+          handleSubmit={handleUpdateItem}
+          isLoading={isLoadingUpdate}
+        />
       )}
     </PageContainer>
   );

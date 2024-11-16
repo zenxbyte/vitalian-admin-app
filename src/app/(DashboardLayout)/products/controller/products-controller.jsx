@@ -37,18 +37,44 @@ const validationSchemaItem = Yup.object({
   itemColor: Yup.string().required("Item color is required"),
 
   // Validate itemSizeVariants as individual fields for each size
-  xsAvailable: Yup.boolean(),
-  xsQuantity: Yup.number().min(0, "Quantity cannot be negative"),
-  sAvailable: Yup.boolean(),
-  sQuantity: Yup.number().min(0, "Quantity cannot be negative"),
-  mAvailable: Yup.boolean(),
-  mQuantity: Yup.number().min(0, "Quantity cannot be negative"),
-  lAvailable: Yup.boolean(),
-  lQuantity: Yup.number().min(0, "Quantity cannot be negative"),
-  xlAvailable: Yup.boolean(),
-  xlQuantity: Yup.number().min(0, "Quantity cannot be negative"),
-  xxlAvailable: Yup.boolean(),
-  xxlQuantity: Yup.number().min(0, "Quantity cannot be negative"),
+  itemSizes: Yup.array().of(
+    Yup.object().shape({
+      size: Yup.string().required("Size is required"),
+      quantity: Yup.number().required("Quantity is required"),
+    })
+  ),
+  itemInformationSchema: Yup.object().shape({
+    material: Yup.string().max(100, "Material cannot exceed 100 characters"),
+
+    color: Yup.string(),
+
+    fitType: Yup.string().max(50, "Fit type cannot exceed 50 characters"),
+
+    stretch: Yup.string().max(
+      50,
+      "Stretch description cannot exceed 50 characters"
+    ),
+
+    style: Yup.string().max(
+      50,
+      "Style description cannot exceed 50 characters"
+    ),
+
+    accessories: Yup.string().max(
+      100,
+      "Accessories description cannot exceed 100 characters"
+    ),
+
+    modelSize: Yup.string().max(
+      20,
+      "Model size description cannot exceed 20 characters"
+    ),
+
+    washAndCare: Yup.string().max(
+      500,
+      "Instructions cannot exceed 500 characters"
+    ),
+  }),
 });
 
 const ProductsController = () => {
@@ -106,18 +132,17 @@ const ProductsController = () => {
       itemPrice: 0,
       itemDiscount: 0,
       itemColor: "Red",
-      xsAvailable: true,
-      xsQuantity: 0,
-      sAvailable: true,
-      sQuantity: 0,
-      mAvailable: true,
-      mQuantity: 0,
-      lAvailable: true,
-      lQuantity: 0,
-      xlAvailable: true,
-      xlQuantity: 0,
-      xxlAvailable: true,
-      xxlQuantity: 0,
+      itemSizes: [],
+      itemInformation: {
+        material: "",
+        color: "",
+        fitType: "",
+        stretch: "",
+        style: "",
+        accessories: "",
+        modelSize: "",
+        washAndCare: "",
+      },
     },
     validationSchema: validationSchemaItem,
     onSubmit: () => {

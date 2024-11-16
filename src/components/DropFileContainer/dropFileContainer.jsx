@@ -52,7 +52,6 @@ const DropFileContainer = ({ open, onClose, onSave }) => {
         fileName,
         originalFileType
       );
-      console.log(croppedImage);
 
       //const imgeUrl = URL.createObjectURL(croppedImage);
       onSave({

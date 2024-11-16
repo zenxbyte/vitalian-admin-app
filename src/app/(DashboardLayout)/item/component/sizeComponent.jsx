@@ -22,71 +22,16 @@ export const SizeComponent = ({ data }) => {
           <TableHead>
             <TableRow sx={{ bgcolor: "lightblue", color: "white" }}>
               <CustomTableCell>Size</CustomTableCell>
-              <CustomTableCell>Availability</CustomTableCell>
               <CustomTableCell>Quantity</CustomTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <CustomTableCell>XS</CustomTableCell>
-              <CustomTableCell>
-                <Chip
-                  color={data.xsAvailable ? "success" : "warning"}
-                  label={data.xsAvailable ? "Available" : "Not Available"}
-                />
-              </CustomTableCell>
-              <CustomTableCell>{data.xsQuantity}</CustomTableCell>
-            </TableRow>
-            <TableRow>
-              <CustomTableCell>XS</CustomTableCell>
-              <CustomTableCell>
-                <Chip
-                  color={data.sAvailable ? "success" : "warning"}
-                  label={data.sAvailable ? "Available" : "Not Available"}
-                />
-              </CustomTableCell>
-              <CustomTableCell>{data.sQuantity}</CustomTableCell>
-            </TableRow>
-            <TableRow>
-              <CustomTableCell>XS</CustomTableCell>
-              <CustomTableCell>
-                <Chip
-                  color={data.mAvailable ? "success" : "warning"}
-                  label={data.mAvailable ? "Available" : "Not Available"}
-                />
-              </CustomTableCell>
-              <CustomTableCell>{data.mQuantity}</CustomTableCell>
-            </TableRow>
-            <TableRow>
-              <CustomTableCell>XS</CustomTableCell>
-              <CustomTableCell>
-                <Chip
-                  color={data.lAvailable ? "success" : "warning"}
-                  label={data.lAvailable ? "Available" : "Not Available"}
-                />
-              </CustomTableCell>
-              <CustomTableCell>{data.lQuantity}</CustomTableCell>
-            </TableRow>
-            <TableRow>
-              <CustomTableCell>XS</CustomTableCell>
-              <CustomTableCell>
-                <Chip
-                  color={data.xlAvailable ? "success" : "warning"}
-                  label={data.xlAvailable ? "Available" : "Not Available"}
-                />
-              </CustomTableCell>
-              <CustomTableCell>{data.xlQuantity}</CustomTableCell>
-            </TableRow>
-            <TableRow>
-              <CustomTableCell>XS</CustomTableCell>
-              <CustomTableCell>
-                <Chip
-                  color={data.xxlAvailable ? "success" : "warning"}
-                  label={data.xxlAvailable ? "Available" : "Not Available"}
-                />
-              </CustomTableCell>
-              <CustomTableCell>{data.xxlQuantity}</CustomTableCell>
-            </TableRow>
+            {data.itemSizes.map((item, index) => (
+              <TableRow key={index}>
+                <CustomTableCell>{item.size}</CustomTableCell>
+                <CustomTableCell>{item.quantity}</CustomTableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

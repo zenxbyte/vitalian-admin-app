@@ -19,27 +19,24 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Checkbox,
-  FormGroup,
+  Switch,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import CloseIcon from "@mui/icons-material/Close";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { AddCircleRounded } from "@mui/icons-material";
 
 import { CurrencyInput } from "@/components/currency-input/currency-input";
 import DropFileContainer from "@/components/DropFileContainer/dropFileContainer";
 import { COLORS } from "@/constants/colors-constatns";
-import { SIZES } from "@/constants/size-constants";
-import { AddCircleRounded } from "@mui/icons-material";
-import { SelectSizeDialog } from "./selectSizeDialog";
+import { SelectSizeDialog } from "../../products/components/selectSizeDialog";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export const ItemAddDialog = ({
+export const ItemUpdateDialog = ({
   isOpen,
   handleClose,
   images,
@@ -110,7 +107,7 @@ export const ItemAddDialog = ({
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Add Item
+              Update Item
             </Typography>
             <Button
               autoFocus
@@ -198,7 +195,24 @@ export const ItemAddDialog = ({
                 helperText={touched.itemDescription && errors.itemDescription}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography>Product Is Active</Typography>
+                <Switch
+                  checked={values.itemIsActive}
+                  onChange={(e) => {
+                    setFieldValue("itemIsActive", e.target.checked);
+                  }}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
               <CurrencyInput
                 label="Item Price"
                 name="itemPrice"
