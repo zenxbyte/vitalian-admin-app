@@ -61,12 +61,6 @@ export const ProductsView = ({
     "Price",
     "Discounted Amount",
     "Color",
-    "XS",
-    "S",
-    "M",
-    "L",
-    "XL",
-    "XXL",
   ];
   return (
     <PageContainer title="Products">
@@ -181,12 +175,6 @@ export const ProductsView = ({
                                     </TableCell>
                                     <TableCell>{item.itemDiscount} %</TableCell>
                                     <TableCell>{item.itemColor}</TableCell>
-                                    <TableCell>{item.xsQuantity}</TableCell>
-                                    <TableCell>{item.sQuantity}</TableCell>
-                                    <TableCell>{item.mQuantity}</TableCell>
-                                    <TableCell>{item.lQuantity}</TableCell>
-                                    <TableCell>{item.xlQuantity}</TableCell>
-                                    <TableCell>{item.xxlQuantity}</TableCell>
                                   </TableRow>
                                 ))}
                               </>

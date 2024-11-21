@@ -278,6 +278,7 @@ const ProductsController = () => {
         .then((res) => {
           if (responseUtil.isResponseSuccess(res.data.responseCode)) {
             handleOpenCloseAddItemDialog();
+            fetchItems();
           }
         })
         .catch(() => {

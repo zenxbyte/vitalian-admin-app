@@ -19,20 +19,16 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Checkbox,
-  FormGroup,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import CloseIcon from "@mui/icons-material/Close";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import { AddCircleRounded } from "@mui/icons-material";
 
 import { CurrencyInput } from "@/components/currency-input/currency-input";
 import DropFileContainer from "@/components/DropFileContainer/dropFileContainer";
 import { COLORS } from "@/constants/colors-constatns";
-import { SIZES } from "@/constants/size-constants";
-import { AddCircleRounded } from "@mui/icons-material";
 import { SelectSizeDialog } from "./selectSizeDialog";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -88,6 +84,11 @@ export const ItemAddDialog = ({
       ]);
       handleOpenCloseSizeDialog();
     }
+  };
+
+  const handleRemoveSize = (index) => {
+    const updatedSizes = values.itemSizes.filter((_, i) => i !== index);
+    setFieldValue("itemSizes", updatedSizes);
   };
 
   return (
@@ -279,36 +280,47 @@ export const ItemAddDialog = ({
                         alignItems="center"
                       >
                         <Typography>{item.size}</Typography>
-                        <TextField
-                          type="number"
-                          name={`itemSizes[${index}].quantity`}
-                          label="Quantity"
-                          fullWidth
-                          sx={{ maxWidth: "200px" }}
-                          value={values.itemSizes[index].quantity}
-                          onChange={(e) => {
-                            const { value } = e.target;
-                            handleChange(`itemSizes[${index}].quantity`)(e);
-                          }}
-                          onBlur={handleBlur(`itemSizes[${index}].quantity`)}
-                          error={Boolean(
-                            touched.itemSizes &&
-                              touched.itemSizes[index] &&
-                              touched.itemSizes[index].quantity &&
-                              errors.itemSizes &&
-                              errors.itemSizes[index] &&
-                              errors.itemSizes[index].quantity
-                          )}
-                          helperText={
-                            (touched.itemSizes &&
-                              touched.itemSizes[index] &&
-                              touched.itemSizes[index].quantity &&
-                              errors.itemSizes &&
-                              errors.itemSizes[index] &&
-                              errors.itemSizes[index].quantity) ||
-                            ""
-                          }
-                        />
+                        <Box
+                          display="flex"
+                          flexDirection="row"
+                          gap={2}
+                          justifyContent="flex-end"
+                          alignItems="center"
+                        >
+                          <TextField
+                            type="number"
+                            name={`itemSizes[${index}].quantity`}
+                            label="Quantity"
+                            fullWidth
+                            sx={{ maxWidth: "200px" }}
+                            value={values.itemSizes[index].quantity}
+                            onChange={(e) => {
+                              const { value } = e.target;
+                              handleChange(`itemSizes[${index}].quantity`)(e);
+                            }}
+                            onBlur={handleBlur(`itemSizes[${index}].quantity`)}
+                            error={Boolean(
+                              touched.itemSizes &&
+                                touched.itemSizes[index] &&
+                                touched.itemSizes[index].quantity &&
+                                errors.itemSizes &&
+                                errors.itemSizes[index] &&
+                                errors.itemSizes[index].quantity
+                            )}
+                            helperText={
+                              (touched.itemSizes &&
+                                touched.itemSizes[index] &&
+                                touched.itemSizes[index].quantity &&
+                                errors.itemSizes &&
+                                errors.itemSizes[index] &&
+                                errors.itemSizes[index].quantity) ||
+                              ""
+                            }
+                          />
+                          <IconButton onClick={() => handleRemoveSize(index)}>
+                            <CancelIcon fontSize="inherit" />
+                          </IconButton>
+                        </Box>
                       </Box>
                     ))}
                   </>
