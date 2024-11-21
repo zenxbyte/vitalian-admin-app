@@ -33,9 +33,3 @@ jobs:
         run: cd /home/ec2-user/actions-runner-admin/_work/vitalian-admin-app && sudo cp -r vitalian-admin-app/* /home/ec2-user/admin
       - name: Change owner
         run: sudo chown -R ec2-user:ec2-user /home/ec2-user/admin/ && sudo chmod -R 755 /home/ec2-user/admin/
-      - name: Install dependencies
-        run: cd /home/ec2-user/admin/ && sudo npm install
-      - name: Build folder
-        run: cd /home/ec2-user/admin/ && npm run build
-      - name: Start server
-        run: cd /home/ec2-user/admin/ && sudo pm2 start npm --name "vitalian-admin-app" -- start --env PORT=3015
