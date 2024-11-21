@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 
-import { ItemView } from "../view/item-view";
+import { ItemView } from "../view/item-view.jsx";
 import { backendAuthApi } from "@/axios/instance/backend-axios-instance";
 import { BACKEND_API } from "@/axios/constant/backend-api";
 import responseUtil from "@/utils/responseUtil";

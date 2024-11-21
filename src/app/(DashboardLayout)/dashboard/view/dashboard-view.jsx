@@ -1,6 +1,6 @@
 "user client";
 
-import PageContainer from "@/components/container/PageContainer";
+import PageContainer from "@/components/container/PageContainer.jsx";
 import { Container, Typography } from "@mui/material";
 
 export const DashboardView = () => {

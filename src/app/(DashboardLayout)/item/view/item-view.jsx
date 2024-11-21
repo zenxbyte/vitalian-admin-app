@@ -6,15 +6,8 @@ import {
   Breadcrumbs,
   Button,
   CardMedia,
-  Chip,
   Link,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -24,8 +17,8 @@ import PageContainer from "@/components/container/PageContainer.jsx";
 import Loading from "@/app/loading.jsx";
 import { formatCurrency } from "@/utils/format-number";
 import { COLORS } from "@/constants/colors-constatns";
-import { SizeComponent } from "../component/sizeComponent";
-import { ItemUpdateDialog } from "../component/itemUpdateDialog";
+import { SizeComponent } from "../component/sizeComponent.jsx";
+import { ItemUpdateDialog } from "../component/itemUpdateDialog.jsx";
 
 export const ItemView = ({
   formik,
