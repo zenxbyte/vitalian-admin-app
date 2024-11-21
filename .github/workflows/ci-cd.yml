@@ -29,13 +29,13 @@ jobs:
           node-version: "20"
       - name: Deploy to environment
         run: echo "UAT depolyment"
-      - name: Stop service
-        run: cd ~/server && sudo systemctl stop vitalian_uat_server.service
       - name: Copy files
-        run: cd /home/ec2-user/actions-runner/_work/vitalian-backend && sudo cp -r vitalian-backend/* /home/ec2-user/server
+        run: cd /home/ec2-user/actions-runner-admin/_work/vitalian-admin-app && sudo cp -r vitalian-admin-app/* /home/ec2-user/admin
       - name: Change owner
-        run: sudo chown -R ec2-user:ec2-user /home/ec2-user/server/ && sudo chmod -R 755 /home/ec2-user/server/
+        run: sudo chown -R ec2-user:ec2-user /home/ec2-user/admin/ && sudo chmod -R 755 /home/ec2-user/admin/
       - name: Install dependencies
-        run: cd /home/ec2-user/server/ && sudo npm i
+        run: cd /home/ec2-user/admin/ && sudo npm i
+      - name: Build folder
+        run: npm run build
       - name: Start server
-        run: sudo systemctl start vitalian_uat_server.service
+        run: sudo pm2 start npm --name "vitalian-admin-app" -- start --env PORT=3015
