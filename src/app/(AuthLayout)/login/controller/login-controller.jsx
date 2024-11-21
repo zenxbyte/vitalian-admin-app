@@ -7,14 +7,16 @@ import { useFormik } from "formik";
 
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { useSnackbar } from "notistack";
 
 import { COOKIES } from "@/constants/cookie_constants";
 import { NAVIGATION_ROUTES } from "@/navigation/navigationRoutes";
-import { LoginView } from "../view/login-view";
 import commonUtil from "@/utils/common-util";
 import { backendAuthApi } from "@/axios/instance/backend-axios-instance";
 import { BACKEND_API } from "@/axios/constant/backend-api";
-import { useSnackbar } from "notistack";
+
+import { LoginView } from "../view/login-view.jsx";
+
 import useAuthStore from "@/store/auth-store";
 import responseUtil from "@/utils/responseUtil";
 

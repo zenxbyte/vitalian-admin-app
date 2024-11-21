@@ -3,9 +3,9 @@ import Link from "next/link";
 import { Box, Card, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 // components
-import Logo from "@/layouts/shared/logo/Logo";
-import PageContainer from "@/components/container/PageContainer";
-import AuthLogin from "../component/AuthLogin";
+import Logo from "@/layouts/shared/logo/Logo.jsx";
+import PageContainer from "@/components/container/PageContainer.jsx";
+import AuthLogin from "../component/AuthLogin.jsx";
 
 export const LoginView = ({ formik, isLoading, handleLogin }) => {
   return (

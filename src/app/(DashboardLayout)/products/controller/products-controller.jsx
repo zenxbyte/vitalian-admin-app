@@ -5,14 +5,14 @@ import axios from "axios";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
 
 import { BACKEND_API } from "@/axios/constant/backend-api";
 import { backendAuthApi } from "@/axios/instance/backend-axios-instance";
 import responseUtil from "@/utils/responseUtil";
 import commonUtil from "@/utils/common-util";
-import { useSnackbar } from "notistack";
 import { NAVIGATION_ROUTES } from "@/navigation/navigationRoutes";
-import { ProductsView } from "../view/products-view";
+import { ProductsView } from "../view/products-view.jsx";
 
 const validationSchemaCreate = Yup.object().shape({
   catName: Yup.string().required("Category Name is required"),

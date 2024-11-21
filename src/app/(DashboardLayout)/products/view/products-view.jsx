@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import PageContainer from "@/components/container/PageContainer";
 import {
   Box,
   Button,
@@ -10,18 +9,18 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { CategoryAddDialog } from "../components/categoryAddDialog";
-import { CategoryUpdateDialog } from "../components/categoryUpdateDialog";
-import { ItemAddDialog } from "../components/itemAddDialog";
-import { CustomTableHead } from "@/components/custom-table/custom-table-head";
-import TableLoadingRow from "@/components/custom-table/table-loading-row";
-import TableEmptyRow from "@/components/custom-table/table-empty-row";
+import { CategoryAddDialog } from "../components/categoryAddDialog.jsx";
+import { CategoryUpdateDialog } from "../components/categoryUpdateDialog.jsx";
+import { ItemAddDialog } from "../components/itemAddDialog.jsx";
+import { CustomTableHead } from "@/components/custom-table/custom-table-head.jsx";
+import TableLoadingRow from "@/components/custom-table/table-loading-row.jsx";
+import TableEmptyRow from "@/components/custom-table/table-empty-row.jsx";
+import PageContainer from "@/components/container/PageContainer.jsx";
 import { formatCurrency } from "@/utils/format-number";
 
 export const ProductsView = ({
