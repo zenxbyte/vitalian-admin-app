@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid2";
 // components
 import Logo from "@/layouts/shared/logo/Logo.jsx";
 import PageContainer from "@/components/container/PageContainer.jsx";
-import AuthLogin from "../component/AuthLogin.jsx";
+import AuthLogin from "../component/authLogin.jsx";
 
 export const LoginView = ({ formik, isLoading, handleLogin }) => {
   return (
