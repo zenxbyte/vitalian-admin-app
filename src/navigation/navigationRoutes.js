@@ -9,4 +9,8 @@ export const NAVIGATION_ROUTES = {
     base: "/item",
     id: "/item?id=",
   },
+  orders: {
+    base: "/orders",
+    id: "/orders?id=",
+  },
 };

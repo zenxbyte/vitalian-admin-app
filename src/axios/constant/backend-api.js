@@ -15,4 +15,6 @@ export const BACKEND_API = {
   ITEM_GET_BY_CAT: IP_URL + "item/noAuth/by-category/",
   ITEM_ADD: IP_URL + "item/auth/create/",
   ITEM_UPDATE: IP_URL + "item/auth/update/",
+
+  ORDERS: IP_URL + "order/auth/filter",
 };
