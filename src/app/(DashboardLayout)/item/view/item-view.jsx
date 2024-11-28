@@ -2,12 +2,16 @@
 
 import React from "react";
 import {
+  Avatar,
   Box,
   Breadcrumbs,
   Button,
   CardMedia,
+  ImageList,
+  ImageListItem,
   Link,
   Paper,
+  Stack,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -16,16 +20,19 @@ import Grid from "@mui/material/Grid2";
 import PageContainer from "@/components/container/PageContainer.jsx";
 import Loading from "@/app/loading.jsx";
 import { formatCurrency } from "@/utils/format-number";
-import { COLORS } from "@/constants/colors-constatns";
 import { SizeComponent } from "../component/sizeComponent.jsx";
 import { ItemUpdateDialog } from "../component/itemUpdateDialog.jsx";
+import commonUtil from "@/utils/common-util.js";
 
 export const ItemView = ({
   formik,
   isLoading,
   data,
   images,
+  imgUrls,
   setImages,
+  selectedVariant,
+  handleSelectVariant,
   selectedImage,
   handleImageClick,
   isOpenUpdateDialog,
@@ -34,6 +41,15 @@ export const ItemView = ({
   isLoadingUpdate,
 }) => {
   const matchDownSM = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+
+  const filteredImages = selectedVariant
+    ? imgUrls.filter((img) =>
+        img.imgUrl.includes(
+          selectedVariant.itemColor.toLowerCase().replace(/\s+/g, "")
+        )
+      )
+    : imgUrls;
+
   return (
     <PageContainer title={"Item"}>
       {isLoading ? (
@@ -66,42 +82,38 @@ export const ItemView = ({
             </Box>
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Grid container spacing={2}>
-              {data.itemImages.map((image, index) => (
-                <Grid key={index}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      cursor: "pointer",
-                      border:
-                        selectedImage.imgKey === image.imgKey
-                          ? "1px solid black"
-                          : "none",
-                    }}
-                    onClick={() => handleImageClick(image)}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={image.imgUrl}
-                      alt={`Thumbnail ${index + 1}`}
-                      sx={{
-                        width: matchDownSM ? 30 : 60,
-                        height: matchDownSM ? 40 : 80,
-                        objectFit: "cover",
-                      }}
-                    />
-                  </Paper>
-                </Grid>
-              ))}
+            <Grid container spacing={1}>
+              <Grid size={{ xs: 12, sm: 12 }}>
+                <ImageList cols={6}>
+                  {filteredImages.map((image, index) => (
+                    <ImageListItem
+                      key={index}
+                      onClick={() => handleImageClick(image)}
+                    >
+                      <img
+                        src={image.imgUrl}
+                        alt={"Image"}
+                        loading="lazy"
+                        sx={{
+                          cursor: "pointer",
+                          border:
+                            selectedImage.imgKey === image.imgKey
+                              ? "1px solid black"
+                              : "none",
+                        }}
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+              </Grid>
               <Grid size={{ xs: 12, sm: 12 }}>
                 <Box
                   sx={{
                     flex: 1,
                     overflow: "hidden",
                     position: "relative",
-                    height: 400,
+                    //height: 400,
                     width: "100%",
-                    borderRadius: 2,
                   }}
                 >
                   <CardMedia
@@ -110,9 +122,8 @@ export const ItemView = ({
                     alt="Selected Product Image"
                     sx={{
                       width: "100%",
-                      height: 400,
+                      //height: 400,
                       objectFit: "contain",
-                      borderRadius: 2,
                     }}
                   />
                 </Box>
@@ -135,9 +146,27 @@ export const ItemView = ({
               <Box display="flex" flexDirection="row">
                 <Typography variant="subtitle1">Price</Typography>
                 <Box flexGrow={1} />
-                <Typography variant="subtitle1">
-                  {formatCurrency(data.itemPrice)}
-                </Typography>
+                <Box display="flex" flexDirection="row" gap={1}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      textDecoration:
+                        data.itemDiscount > 0 ? "line-through" : "none",
+                    }}
+                  >
+                    {formatCurrency(data.itemPrice)}
+                  </Typography>
+                  {data.itemDiscount > 0 && (
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {formatCurrency(
+                        commonUtil.calculateDiscountPrice(
+                          data.itemDiscount,
+                          data.itemPrice
+                        )
+                      )}
+                    </Typography>
+                  )}
+                </Box>
               </Box>
               <Box display="flex" flexDirection="row">
                 <Typography variant="subtitle1">Discount Percentage</Typography>
@@ -146,7 +175,38 @@ export const ItemView = ({
                   {data.itemDiscount} %
                 </Typography>
               </Box>
-              <Box display="flex" flexDirection="row" alignItems="center">
+              <Stack direction="row" spacing={2} flexWrap="wrap">
+                {data.itemVariants.map((item, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                  >
+                    <Avatar
+                      alt={item.itemColor}
+                      src={item.itemImages[0].imgUrl}
+                      onClick={() => handleSelectVariant(item)}
+                      sx={{
+                        border:
+                          selectedVariant &&
+                          selectedVariant.itemColor === item.itemColor
+                            ? "1px solid black"
+                            : "none",
+                      }}
+                    />
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      {item.itemColor}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
+              {/* <Box display="flex" flexDirection="row" alignItems="center">
                 <Typography variant="subtitle1">Color</Typography>
                 <Box flexGrow={1} />
                 <Typography variant="subtitle1">{data.itemColor}</Typography>
@@ -160,7 +220,7 @@ export const ItemView = ({
                     borderRadius: "50%",
                   }}
                 />
-              </Box>
+              </Box> */}
               <Typography variant="h6">Other Information</Typography>
               {data.itemInformation.material && (
                 <Box display="flex" flexDirection="row" alignItems="center">
@@ -236,9 +296,11 @@ export const ItemView = ({
               )}
             </Box>
           </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <SizeComponent data={data} />
-          </Grid>
+          {selectedVariant && (
+            <Grid size={{ xs: 12, sm: 4 }}>
+              <SizeComponent data={selectedVariant} />
+            </Grid>
+          )}
         </Grid>
       )}
       {isOpenUpdateDialog && (

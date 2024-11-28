@@ -31,6 +31,7 @@ import { CurrencyInput } from "@/components/currency-input/currency-input";
 import DropFileContainer from "@/components/DropFileContainer/dropFileContainer";
 import { COLORS } from "@/constants/colors-constatns";
 import { SelectSizeDialog } from "../../products/components/selectSizeDialog";
+import { AddColorDialog } from "./addColorDialog";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -45,16 +46,13 @@ export const ItemUpdateDialog = ({
   isLoading,
   handleSubmit,
 }) => {
-  const {
-    touched,
-    errors,
-    getFieldProps,
-    values,
-    setFieldValue,
-    handleChange,
-    handleBlur,
-  } = formik;
+  const { touched, errors, getFieldProps, values, setFieldValue } = formik;
 
+  const [color, setColor] = useState("");
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+
+  const [isOpenColorDlg, setIsOpenColorDlg] = useState(false);
   const [isOpenImgDlg, setIsOpenImgDlg] = useState(false);
   const [isOpenSizeDlg, setIsOpenSizeDlg] = useState(false);
 
@@ -62,29 +60,66 @@ export const ItemUpdateDialog = ({
     setImages((prevImages) => [...prevImages, newImage]);
   };
 
-  const handleRemoveImages = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  const handleRemoveImages = (imgIndex) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== imgIndex));
   };
 
-  const handleOpenCloseImgDialog = () => {
+  const handleOpenCloseImgDialog = (color) => {
+    setSelectedColor(isOpenImgDlg ? null : color);
     setIsOpenImgDlg(!isOpenImgDlg);
   };
 
-  const handleOpenCloseSizeDialog = () => {
+  const handleOpenCloseColorDialog = () => {
+    if (isOpenColorDlg) {
+      setColor("");
+    }
+    setIsOpenColorDlg(!isOpenColorDlg);
+  };
+
+  const handleOpenCloseSizeDialog = (index) => {
+    setSelectedVariant(isOpenSizeDlg ? null : index);
     setIsOpenSizeDlg(!isOpenSizeDlg);
   };
 
-  const handleSelectSize = (e) => {
-    const isExist = values.itemSizes.find(
-      (item) => item.size === e.target.value
+  const handleChangeColor = (e) => {
+    setColor(e.target.value);
+  };
+
+  const handleAddVariant = () => {
+    const isExist = values.itemVariants.find(
+      (item) => item.itemColor === color
     );
+
     if (!isExist) {
-      setFieldValue("itemSizes", [
-        ...values.itemSizes,
+      setFieldValue("itemVariants", [
+        ...values.itemVariants,
+        { itemColor: color, itemSizes: [] },
+      ]);
+      handleOpenCloseColorDialog();
+    }
+  };
+
+  const handleSelectSize = (e) => {
+    const isExist =
+      values.itemVariants[selectedVariant].itemSizes &&
+      values.itemVariants[selectedVariant].itemSizes.find(
+        (item) => item.size === e.target.value
+      );
+
+    if (!isExist) {
+      setFieldValue(`itemVariants[${selectedVariant}].itemSizes`, [
+        ...values.itemVariants[selectedVariant].itemSizes,
         { size: e.target.value, availability: true, quantity: 0 },
       ]);
       handleOpenCloseSizeDialog();
     }
+  };
+
+  const handleRemoveSize = (variantIndex, index) => {
+    const updatedSizes = values.itemVariants[variantIndex].itemSizes.filter(
+      (_, i) => i !== index
+    );
+    setFieldValue(`itemVariants[${variantIndex}].itemSizes`, updatedSizes);
   };
 
   return (
@@ -107,7 +142,7 @@ export const ItemUpdateDialog = ({
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Update Item
+              Update Product Item
             </Typography>
             <Button
               autoFocus
@@ -121,54 +156,6 @@ export const ItemUpdateDialog = ({
         </AppBar>
         <Container sx={{ mt: "20px", mb: "50px" }}>
           <Grid container spacing={4}>
-            <Grid size={{ xs: 12, md: 12 }}>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography variant="h6">Item Images</Typography>
-                <Button
-                  variant="contained"
-                  disabled={images.length === 5}
-                  startIcon={<AddPhotoAlternateIcon />}
-                  onClick={handleOpenCloseImgDialog}
-                >
-                  Add
-                </Button>
-              </Box>
-            </Grid>
-            {images.length > 0 && (
-              <Grid size={{ xs: 12, md: 12 }}>
-                <ImageList sx={{ height: 320 }} cols={5}>
-                  {images.map((item, index) => (
-                    <ImageListItem key={index}>
-                      <img src={item.fileUrl} alt={"Image"} loading="lazy" />
-                      <ImageListItemBar
-                        sx={{
-                          background:
-                            "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
-                            "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
-                        }}
-                        title={item.title}
-                        position="top"
-                        actionIcon={
-                          <IconButton
-                            sx={{ color: "white" }}
-                            onClick={() => handleRemoveImages(index)}
-                          >
-                            <CancelIcon />
-                          </IconButton>
-                        }
-                        actionPosition="left"
-                      />
-                    </ImageListItem>
-                  ))}
-                </ImageList>
-              </Grid>
-            )}
-
             <Grid size={{ xs: 12, md: 12 }}>
               <Typography variant="h6">Item Details</Typography>
             </Grid>
@@ -195,24 +182,7 @@ export const ItemUpdateDialog = ({
                 helperText={touched.itemDescription && errors.itemDescription}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography>Product Is Active</Typography>
-                <Switch
-                  checked={values.itemIsActive}
-                  onChange={(e) => {
-                    setFieldValue("itemIsActive", e.target.checked);
-                  }}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <CurrencyInput
                 label="Item Price"
                 name="itemPrice"
@@ -247,213 +217,256 @@ export const ItemUpdateDialog = ({
                 helperText={touched.itemDiscount && errors.itemDiscount}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 3 }}>
-              <FormControl fullWidth>
-                <InputLabel id="color-select">Color</InputLabel>
-                <Select
-                  labelId="color-select"
-                  id="color-select"
-                  name="itemColor"
-                  label="Color"
-                  {...getFieldProps("itemColor")}
-                >
-                  {COLORS.map((color, index) => (
-                    <MenuItem key={index} value={color.key}>
-                      {color.key}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <Grid size={{ xs: 12, md: 12 }}>
+              <Typography variant="h6">Other Informations</Typography>
             </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Box display="flex" flexDirection="column" gap={2}>
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Typography variant="h6">Size Variants</Typography>
-                  <Button
-                    variant="contained"
-                    startIcon={<AddCircleRounded />}
-                    onClick={handleOpenCloseSizeDialog}
-                  >
-                    Add
-                  </Button>
-                </Box>
-                {formik.values.itemSizes.length > 0 && (
-                  <>
-                    {formik.values.itemSizes.map((item, index) => (
-                      <Box
-                        key={index}
-                        display="flex"
-                        flexDirection="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <Typography>{item.size}</Typography>
-                        <TextField
-                          type="number"
-                          name={`itemSizes[${index}].quantity`}
-                          label="Quantity"
-                          fullWidth
-                          sx={{ maxWidth: "200px" }}
-                          value={values.itemSizes[index].quantity}
-                          onChange={(e) => {
-                            const { value } = e.target;
-                            handleChange(`itemSizes[${index}].quantity`)(e);
-                          }}
-                          onBlur={handleBlur(`itemSizes[${index}].quantity`)}
-                          error={Boolean(
-                            touched.itemSizes &&
-                              touched.itemSizes[index] &&
-                              touched.itemSizes[index].quantity &&
-                              errors.itemSizes &&
-                              errors.itemSizes[index] &&
-                              errors.itemSizes[index].quantity
-                          )}
-                          helperText={
-                            (touched.itemSizes &&
-                              touched.itemSizes[index] &&
-                              touched.itemSizes[index].quantity &&
-                              errors.itemSizes &&
-                              errors.itemSizes[index] &&
-                              errors.itemSizes[index].quantity) ||
-                            ""
-                          }
-                        />
-                      </Box>
-                    ))}
-                  </>
-                )}
-              </Box>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.material"
+                label="Material"
+                fullWidth
+                {...getFieldProps("itemInformation.material")}
+              />
             </Grid>
-
-            <Grid size={{ xs: 12, md: 8 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.color"
+                label="Color"
+                fullWidth
+                {...getFieldProps("itemInformation.color")}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.fitType"
+                label="Fit Type"
+                fullWidth
+                {...getFieldProps("itemInformation.fitType")}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.stretch"
+                label="Stretch Type"
+                fullWidth
+                {...getFieldProps("itemInformation.stretch")}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.style"
+                label="Style"
+                fullWidth
+                {...getFieldProps("itemInformation.style")}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.accessories"
+                label="Accessories"
+                fullWidth
+                {...getFieldProps("itemInformation.accessories")}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.modelSize"
+                label="Model Size"
+                fullWidth
+                {...getFieldProps("itemInformation.modelSize")}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField
+                name="itemInformation.washAndCare"
+                label="Wash & Care"
+                fullWidth
+                {...getFieldProps("itemInformation.washAndCare")}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 12 }}>
               <Box
                 display="flex"
-                flexDirection="column"
-                gap={2}
+                flexDirection="row"
+                justifyContent="space-between"
                 alignItems="center"
               >
-                <Typography variant="h6" textAlign="center">
-                  Other Informations
-                </Typography>
-                <TextField
-                  name="itemInformation.material"
-                  label="Material"
-                  fullWidth
-                  {...getFieldProps("itemInformation.material")}
-                  // error={Boolean(
-                  //   touched.itemInformation.material &&
-                  //     errors.itemInformation.material
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.material &&
-                  //   errors.itemInformation.material
-                  // }
-                />
-                <TextField
-                  name="itemInformation.color"
-                  label="Color"
-                  fullWidth
-                  {...getFieldProps("itemInformation.color")}
-                  // error={Boolean(
-                  //   touched.itemInformation.color &&
-                  //     errors.itemInformation.color
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.color &&
-                  //   errors.itemInformation.color
-                  // }
-                />
-                <TextField
-                  name="itemInformation.fitType"
-                  label="Fit Type"
-                  fullWidth
-                  {...getFieldProps("itemInformation.fitType")}
-                  // error={Boolean(
-                  //   touched.itemInformation.fitType &&
-                  //     errors.itemInformation.fitType
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.fitType &&
-                  //   errors.itemInformation.fitType
-                  // }
-                />
-                <TextField
-                  name="itemInformation.stretch"
-                  label="Stretch Type"
-                  fullWidth
-                  {...getFieldProps("itemInformation.stretch")}
-                  // error={Boolean(
-                  //   touched.itemInformation.stretch &&
-                  //     errors.itemInformation.stretch
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.stretch &&
-                  //   errors.itemInformation.stretch
-                  // }
-                />
-                <TextField
-                  name="itemInformation.style"
-                  label="Style"
-                  fullWidth
-                  {...getFieldProps("itemInformation.style")}
-                  // error={Boolean(
-                  //   touched.itemInformation.style &&
-                  //     errors.itemInformation.style
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.style &&
-                  //   errors.itemInformation.style
-                  // }
-                />
-                <TextField
-                  name="itemInformation.accessories"
-                  label="Accessories"
-                  fullWidth
-                  {...getFieldProps("itemInformation.accessories")}
-                  // error={Boolean(
-                  //   touched.itemInformation.accessories &&
-                  //     errors.itemInformation.accessories
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.accessories &&
-                  //   errors.itemInformation.accessories
-                  // }
-                />
-                <TextField
-                  name="itemInformation.modelSize"
-                  label="Model Size"
-                  fullWidth
-                  {...getFieldProps("itemInformation.modelSize")}
-                  // error={Boolean(
-                  //   touched.itemInformation.modelSize &&
-                  //     errors.itemInformation.modelSize
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.modelSize &&
-                  //   errors.itemInformation.modelSize
-                  // }
-                />
-                <TextField
-                  name="itemInformation.washAndCare"
-                  label="Wash & Care"
-                  fullWidth
-                  {...getFieldProps("itemInformation.washAndCare")}
-                  // error={Boolean(
-                  //   touched.itemInformation.washAndCare &&
-                  //     errors.itemInformation.washAndCare
-                  // )}
-                  // helperText={
-                  //   touched.itemInformation.washAndCare &&
-                  //   errors.itemInformation.washAndCare
-                  // }
-                />
+                <Typography variant="h6">Item Variants</Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<AddCircleRounded />}
+                  onClick={handleOpenCloseColorDialog}
+                >
+                  Add
+                </Button>
               </Box>
             </Grid>
+            {values.itemVariants && values.itemVariants.length > 0 && (
+              <>
+                {formik.values.itemVariants.map((item, index) => (
+                  <Grid key={index} size={{ xs: 12, md: 12 }}>
+                    <Box>
+                      <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 8 }}>
+                          <Box
+                            display="flex"
+                            flexDirection="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <Typography variant="h6">
+                              COLOR : {item.itemColor.toUpperCase()}
+                            </Typography>
+                            <Box display="flex" flexDirection="row" gap={2}>
+                              <Button
+                                variant="outlined"
+                                onClick={() =>
+                                  handleOpenCloseImgDialog(item.itemColor)
+                                }
+                              >
+                                Add Images
+                              </Button>
+                              <Button
+                                variant="outlined"
+                                onClick={() => handleOpenCloseSizeDialog(index)}
+                              >
+                                Add Sizes
+                              </Button>
+                            </Box>
+                          </Box>
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 8 }}>
+                          <ImageList cols={4}>
+                            {images.map((img, imgIndex) => {
+                              const filteredImages =
+                                img.color === item.itemColor;
+
+                              if (filteredImages) {
+                                return (
+                                  <ImageListItem key={imgIndex}>
+                                    <img
+                                      src={img.fileUrl}
+                                      alt={"Image"}
+                                      loading="lazy"
+                                    />
+                                    <ImageListItemBar
+                                      sx={{
+                                        background:
+                                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+                                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
+                                      }}
+                                      title={item.title}
+                                      position="top"
+                                      actionIcon={
+                                        <IconButton
+                                          sx={{ color: "white" }}
+                                          onClick={() =>
+                                            handleRemoveImages(imgIndex)
+                                          }
+                                        >
+                                          <CancelIcon />
+                                        </IconButton>
+                                      }
+                                      actionPosition="left"
+                                    />
+                                  </ImageListItem>
+                                );
+                              }
+                            })}
+                          </ImageList>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 4 }}>
+                          {values.itemVariants[index].itemSizes.length > 0 && (
+                            <Box display="flex" flexDirection="column" gap={2}>
+                              {values.itemVariants[index].itemSizes.map(
+                                (item, subIndex) => (
+                                  <Box
+                                    key={subIndex}
+                                    display="flex"
+                                    flexDirection="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                  >
+                                    <Typography>{item.size}</Typography>
+                                    <Box
+                                      display="flex"
+                                      flexDirection="row"
+                                      gap={2}
+                                      justifyContent="flex-end"
+                                      alignItems="center"
+                                    >
+                                      <TextField
+                                        type="number"
+                                        name={`itemVariants[${index}].itemSizes[${subIndex}].quantity`}
+                                        label="Quantity"
+                                        fullWidth
+                                        inputProps={{ min: 0 }}
+                                        sx={{ maxWidth: "200px" }}
+                                        {...getFieldProps(
+                                          `itemVariants[${index}].itemSizes[${subIndex}].quantity`
+                                        )}
+                                        error={Boolean(
+                                          touched.itemVariants &&
+                                            touched.itemVariants[index] &&
+                                            touched.itemVariants[index]
+                                              .itemSizes &&
+                                            touched.itemVariants[index]
+                                              .itemSizes[subIndex] &&
+                                            touched.itemVariants[index]
+                                              .itemSizes[subIndex].quantity &&
+                                            errors.itemVariants &&
+                                            errors.itemVariants[index] &&
+                                            errors.itemVariants[index]
+                                              .itemSizes &&
+                                            errors.itemVariants[index]
+                                              .itemSizes[subIndex] &&
+                                            errors.itemVariants[index]
+                                              .itemSizes[subIndex].quantity
+                                        )}
+                                        helperText={
+                                          touched.itemVariants &&
+                                          touched.itemVariants[index] &&
+                                          touched.itemVariants[index]
+                                            .itemSizes &&
+                                          touched.itemVariants[index].itemSizes[
+                                            subIndex
+                                          ] &&
+                                          errors.itemVariants &&
+                                          errors.itemVariants[index] &&
+                                          errors.itemVariants[index]
+                                            .itemSizes &&
+                                          errors.itemVariants[index].itemSizes[
+                                            subIndex
+                                          ] &&
+                                          errors.itemVariants[index].itemSizes[
+                                            subIndex
+                                          ].quantity
+                                            ? errors.itemVariants[index]
+                                                .itemSizes[subIndex].quantity
+                                            : ""
+                                        }
+                                      />
+                                      <IconButton
+                                        onClick={() =>
+                                          handleRemoveSize(index, subIndex)
+                                        }
+                                      >
+                                        <CancelIcon fontSize="inherit" />
+                                      </IconButton>
+                                    </Box>
+                                  </Box>
+                                )
+                              )}
+                            </Box>
+                          )}
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Grid>
+                ))}
+              </>
+            )}
           </Grid>
         </Container>
       </Dialog>
@@ -462,6 +475,16 @@ export const ItemUpdateDialog = ({
           open={isOpenImgDlg}
           onClose={handleOpenCloseImgDialog}
           onSave={handleAddImage}
+          color={selectedColor}
+        />
+      )}
+      {isOpenColorDlg && (
+        <AddColorDialog
+          isOpen={isOpenColorDlg}
+          handleClose={handleOpenCloseColorDialog}
+          color={color}
+          handleChangeColor={handleChangeColor}
+          handleAddVariant={handleAddVariant}
         />
       )}
       {isOpenSizeDlg && (

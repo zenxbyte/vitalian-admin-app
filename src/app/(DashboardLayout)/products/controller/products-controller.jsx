@@ -34,13 +34,16 @@ const validationSchemaItem = Yup.object({
   itemDiscount: Yup.number()
     .min(0, "Discount cannot be negative")
     .max(100, "Discount cannot be greater than 100"),
-  itemColor: Yup.string().required("Item color is required"),
 
-  // Validate itemSizeVariants as individual fields for each size
-  itemSizes: Yup.array().of(
+  itemVariants: Yup.array().of(
     Yup.object().shape({
-      size: Yup.string().required("Size is required"),
-      quantity: Yup.number().required("Quantity is required"),
+      itemColor: Yup.string().required("Image color is required"),
+      itemSizes: Yup.array().of(
+        Yup.object().shape({
+          size: Yup.string().required("Size is required"),
+          quantity: Yup.number().required("Quantity is required"),
+        })
+      ),
     })
   ),
   itemInformationSchema: Yup.object().shape({
@@ -131,8 +134,7 @@ const ProductsController = () => {
       itemDescription: "",
       itemPrice: 0,
       itemDiscount: 0,
-      itemColor: "Red",
-      itemSizes: [],
+      itemVariants: [],
       itemInformation: {
         material: "",
         color: "",
@@ -256,7 +258,12 @@ const ProductsController = () => {
   const handleAddItem = async () => {
     commonUtil.validateFormik(formikAddItem);
 
-    if (formikAddItem.isValid && formikAddItem.dirty) {
+    if (
+      formikAddItem.isValid &&
+      formikAddItem.dirty &&
+      images.length > 0 &&
+      formikAddItem.values.itemVariants.length > 0
+    ) {
       setIsLoadingAddItem(true);
 
       const data = new FormData();

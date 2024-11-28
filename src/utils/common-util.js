@@ -1,3 +1,5 @@
+import { fTimestamp } from "./format-time";
+
 /**
  * Returns true if a value is undefined
  * @param value
@@ -31,25 +33,9 @@ const stringIsEmptyOrSpaces = (string) => {
   return isUndefinedOrNull(string) || string.match(/^ *$/) !== null;
 };
 
-const getDirectImageLink = (imageId) => {
-  if (imageId) {
-    return `https://drive.google.com/thumbnail?id=${imageId}`;
-    //return `https://drive.google.com/uc?id=${imageId}`;
-  }
-  // If the link doesn't match the expected pattern
-  return null;
-};
-
-const calculateMonthDifference = (date) => {
-  const scheduledDate = new Date(date);
-
-  const currentDate = new Date();
-
-  // Calculate the difference in months
-  const differenceInMs = scheduledDate.getTime() - currentDate.getTime();
-
-  // Determine if the date is within the same month
-  return differenceInMs <= 30 * 24 * 60 * 60 * 1000;
+const calculateDiscountPrice = (discount, baseprice) => {
+  const discountPerc = 100 - discount;
+  return (discountPerc * baseprice) / 100;
 };
 
 const validateFormik = (formik) => {
@@ -66,14 +52,18 @@ const validateFormik = (formik) => {
   });
 };
 
-const isToday = (givenDate) => {
-  const today = new Date();
-  const date = new Date(givenDate);
-  return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
+const createImgFileName = (color, originalFile) => {
+  const fileType = originalFile.name.substring(
+    originalFile.name.lastIndexOf(".") + 1
   );
+  const newFileName = `${color
+    .toLowerCase()
+    .replace(/\s+/g, "")}-${fTimestamp()}.${fileType}`;
+
+  return new File([originalFile], newFileName, {
+    type: originalFile.type,
+    lastModified: originalFile.lastModified,
+  });
 };
 
 const blobToFile = (blob, fileName, originalFileType = "image/jpeg") => {
@@ -86,9 +76,8 @@ export default {
   isUndefinedOrNull,
   roundNumber,
   stringIsEmptyOrSpaces,
-  getDirectImageLink,
-  calculateMonthDifference,
+  calculateDiscountPrice,
   validateFormik,
-  isToday,
+  createImgFileName,
   blobToFile,
 };

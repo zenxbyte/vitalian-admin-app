@@ -14,7 +14,7 @@ import Cropper from "react-easy-crop";
 import cropImageUtil from "../../utils/cropImageUtil.js";
 import commonUtil from "@/utils/common-util.js";
 
-const DropFileContainer = ({ open, onClose, onSave }) => {
+const DropFileContainer = ({ open, onClose, onSave, color }) => {
   const [imageSrc, setImageSrc] = useState(null);
   const [fileName, setFileName] = useState("");
   const [originalFileType, setOriginalFileType] = useState("");
@@ -24,7 +24,7 @@ const DropFileContainer = ({ open, onClose, onSave }) => {
 
   // Handles image file upload
   const handleFileChange = (event) => {
-    const file = event.target.files[0];
+    const file = commonUtil.createImgFileName(color, event.target.files[0]);
 
     setFileName(file.name);
 
@@ -57,6 +57,7 @@ const DropFileContainer = ({ open, onClose, onSave }) => {
       onSave({
         file: croppedImage,
         fileUrl: URL.createObjectURL(croppedImage),
+        color: color,
         status: "new",
       });
       onClose();
