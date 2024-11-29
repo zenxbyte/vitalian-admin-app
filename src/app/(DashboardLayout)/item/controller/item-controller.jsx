@@ -22,13 +22,16 @@ const validationSchemaItem = Yup.object({
   itemDiscount: Yup.number()
     .min(0, "Discount cannot be negative")
     .max(100, "Discount cannot be greater than 100"),
-  itemColor: Yup.string().required("Item color is required"),
-
-  // Validate itemSizeVariants as individual fields for each size
-  itemSizes: Yup.array().of(
+  itemVariants: Yup.array().of(
     Yup.object().shape({
-      size: Yup.string().required("Size is required"),
-      quantity: Yup.number().required("Quantity is required"),
+      itemColor: Yup.string().required("Image color is required"),
+      itemSizes: Yup.array().of(
+        Yup.object().shape({
+          size: Yup.string().required("Size is required"),
+          quantity: Yup.number().required("Quantity is required"),
+        })
+      ),
+      itemImages: Yup.array(),
     })
   ),
   itemInformation: Yup.object().shape({
@@ -72,6 +75,8 @@ const ItemController = () => {
   const cancelToken = axios.CancelToken.source();
 
   const [data, setData] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [imgUrls, setImgUrls] = useState([]);
 
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState([null]);
@@ -85,12 +90,9 @@ const ItemController = () => {
     initialValues: {
       itemTitle: "",
       itemDescription: "",
-      itemIsActive: "",
       itemPrice: 0,
       itemDiscount: 0,
-      itemColor: "Red",
-      itemImages: [],
-      itemSizes: [],
+      itemVariants: [],
       itemInformation: {
         material: "",
         color: "",
@@ -112,15 +114,31 @@ const ItemController = () => {
     setSelectedImage(image);
   };
 
+  const handleSelectVariant = (variant) => {
+    setSelectedVariant(selectedVariant === variant ? null : variant);
+  };
+
   const handleOpenCloseItemUpdateDialog = () => {
     if (isOpenUpdateDialog) {
-      setImages(() => [
-        ...data.itemImages.map((img) => ({
-          file: null,
-          fileUrl: img.imgUrl,
-          status: "old",
-        })),
-      ]);
+      setImages(
+        data.itemVariants.flatMap((item) =>
+          item.itemImages.map((image) => ({
+            file: null,
+            color: item.itemColor,
+            fileUrl: image.imgUrl,
+            status: "old",
+          }))
+        )
+      );
+      formik.setValues({
+        itemTitle: data.itemTitle,
+        itemDescription: data.itemDescription,
+        itemIsActive: data.itemIsActive,
+        itemVariants: data.itemVariants,
+        itemPrice: data.itemPrice,
+        itemDiscount: data.itemDiscount,
+        itemInformation: data.itemInformation,
+      });
     }
     setIsOpenUpdateDialog(!isOpenUpdateDialog);
   };
@@ -130,8 +148,27 @@ const ItemController = () => {
     if (formik.isValid && formik.dirty) {
       setIsLoadingUpdate(true);
 
-      const existingImages = formik.values.itemImages.filter((image) =>
-        images.some((updatedImage) => updatedImage.fileUrl === image.imgUrl)
+      const updatedVariants = formik.values.itemVariants.map(
+        (variant, index) => {
+          const variantColor = variant.itemColor
+            .toLowerCase()
+            .replace(/\s/g, "");
+
+          const imgs = (variant.itemImages || [])
+            .filter((image) =>
+              image.imgUrl.toLowerCase().includes(variantColor)
+            )
+            .filter((image) =>
+              images.some(
+                (updatedImage) => updatedImage.fileUrl === image.imgUrl
+              )
+            );
+
+          return {
+            ...variant,
+            itemImages: imgs,
+          };
+        }
       );
 
       const formdata = new FormData();
@@ -142,7 +179,7 @@ const ItemController = () => {
       });
       const body = JSON.stringify({
         ...formik.values,
-        itemImages: existingImages,
+        itemVariants: updatedVariants,
       });
 
       formdata.append("data", body);
@@ -182,31 +219,36 @@ const ItemController = () => {
       .then((res) => {
         if (responseUtil.isResponseSuccess(res.data.responseCode)) {
           setData(res.data.responseData);
-          setImages(() => [
-            ...res.data.responseData.itemImages.map((img) => ({
-              file: null,
-              fileUrl: img.imgUrl,
-              status: "old",
-            })),
-          ]);
+          setImages(
+            res.data.responseData.itemVariants.flatMap((item) =>
+              item.itemImages.map((image) => ({
+                file: null,
+                color: item.itemColor,
+                fileUrl: image.imgUrl,
+                status: "old",
+              }))
+            )
+          );
 
           const resData = res.data.responseData;
+
+          //setSelectedVariant(res.data.responseData.itemVariants[0]);
+
+          setImgUrls(
+            resData.itemVariants.flatMap((variant) =>
+              variant.itemImages.map((image) => image)
+            )
+          );
+
+          setSelectedImage(resData.itemVariants[0].itemImages[0]);
 
           formik.setValues({
             itemTitle: resData.itemTitle,
             itemDescription: resData.itemDescription,
             itemIsActive: resData.itemIsActive,
-            itemColor: resData.itemColor,
+            itemVariants: resData.itemVariants,
             itemPrice: resData.itemPrice,
             itemDiscount: resData.itemDiscount,
-            itemSizes: resData.itemSizes.map((item) => ({
-              size: item.size,
-              quantity: item.quantity,
-            })),
-            itemImages: resData.itemImages.map((item) => ({
-              imgUrl: item.imgUrl,
-              imgKey: item.imgKey,
-            })),
             itemInformation: resData.itemInformation,
           });
           handleImageClick(res.data.responseData.itemImages[0]);
@@ -232,6 +274,9 @@ const ItemController = () => {
       isLoading={isLoading}
       data={data}
       images={images}
+      imgUrls={imgUrls}
+      selectedVariant={selectedVariant}
+      handleSelectVariant={handleSelectVariant}
       setImages={setImages}
       selectedImage={selectedImage}
       handleImageClick={handleImageClick}

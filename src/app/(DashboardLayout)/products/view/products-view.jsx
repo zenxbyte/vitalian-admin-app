@@ -54,13 +54,7 @@ export const ProductsView = ({
   handleChangePage,
   handleChangeRowsPerPage,
 }) => {
-  const itemHeaders = [
-    "Title",
-    "Description",
-    "Price",
-    "Discounted Amount",
-    "Color",
-  ];
+  const itemHeaders = ["Title", "Description", "Price", "Discounted Amount"];
   return (
     <PageContainer title="Products">
       <Grid container spacing={2}>
@@ -173,7 +167,6 @@ export const ProductsView = ({
                                       {formatCurrency(item.itemPrice)}
                                     </TableCell>
                                     <TableCell>{item.itemDiscount} %</TableCell>
-                                    <TableCell>{item.itemColor}</TableCell>
                                   </TableRow>
                                 ))}
                               </>
