@@ -160,7 +160,7 @@ export const ProductsView = ({
                                     <TableCell>{item.itemTitle}</TableCell>
                                     <TableCell>
                                       {item.itemDescription
-                                        ? itemDescription
+                                        ? item.itemDescription
                                         : " - "}
                                     </TableCell>
                                     <TableCell>
