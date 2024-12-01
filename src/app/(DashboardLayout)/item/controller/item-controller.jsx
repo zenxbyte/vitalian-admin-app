@@ -11,6 +11,8 @@ import { backendAuthApi } from "@/axios/instance/backend-axios-instance";
 import { BACKEND_API } from "@/axios/constant/backend-api";
 import responseUtil from "@/utils/responseUtil";
 import commonUtil from "@/utils/common-util";
+import { useSnackbar } from "notistack";
+import { SNACKBAR_VARIANT } from "@/constants/snackbar-constants.js";
 
 const validationSchemaItem = Yup.object({
   itemTitle: Yup.string().required("Item title is required"),
@@ -69,6 +71,7 @@ const validationSchemaItem = Yup.object({
 });
 
 const ItemController = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
@@ -145,6 +148,18 @@ const ItemController = () => {
 
   const handleUpdateItem = async () => {
     commonUtil.validateFormik(formik);
+
+    const uniqueColors = new Set(images.map((item) => item.color));
+
+    if (
+      uniqueColors.size !== formik.values.itemVariants.length ||
+      images.length === 0 ||
+      formik.values.itemVariants.length === 0
+    ) {
+      enqueueSnackbar("Images required", { variant: SNACKBAR_VARIANT.WARNING });
+      return;
+    }
+
     if (formik.isValid && formik.dirty) {
       setIsLoadingUpdate(true);
 
