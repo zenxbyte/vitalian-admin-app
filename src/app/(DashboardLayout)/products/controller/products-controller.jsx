@@ -13,6 +13,7 @@ import responseUtil from "@/utils/responseUtil";
 import commonUtil from "@/utils/common-util";
 import { NAVIGATION_ROUTES } from "@/navigation/navigationRoutes";
 import { ProductsView } from "../view/products-view.jsx";
+import { SNACKBAR_VARIANT } from "@/constants/snackbar-constants.js";
 
 const validationSchemaCreate = Yup.object().shape({
   catName: Yup.string().required("Category Name is required"),
@@ -258,12 +259,18 @@ const ProductsController = () => {
   const handleAddItem = async () => {
     commonUtil.validateFormik(formikAddItem);
 
+    const uniqueColors = new Set(images.map((item) => item.color));
+
     if (
-      formikAddItem.isValid &&
-      formikAddItem.dirty &&
-      images.length > 0 &&
-      formikAddItem.values.itemVariants.length > 0
+      uniqueColors.size !== formikAddItem.values.itemVariants.length ||
+      images.length === 0 ||
+      formikAddItem.values.itemVariants.length === 0
     ) {
+      enqueueSnackbar("Images required", { variant: SNACKBAR_VARIANT.WARNING });
+      return;
+    }
+
+    if (formikAddItem.isValid && formikAddItem.dirty) {
       setIsLoadingAddItem(true);
 
       const data = new FormData();
