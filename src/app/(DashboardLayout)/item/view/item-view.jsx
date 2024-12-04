@@ -45,7 +45,7 @@ export const ItemView = ({
   const filteredImages = selectedVariant
     ? imgUrls.filter((img) =>
         img.imgUrl.includes(
-          selectedVariant.itemColor.toLowerCase().replace(/\s+/g, "")
+          selectedVariant.variantColor.toLowerCase().replace(/\s+/g, "")
         )
       )
     : imgUrls;
@@ -144,6 +144,15 @@ export const ItemView = ({
                 </Typography>
               </Box>
               <Box display="flex" flexDirection="row">
+                <Typography variant="subtitle1">Base Price</Typography>
+                <Box flexGrow={1} />
+                <Box display="flex" flexDirection="row" gap={1}>
+                  <Typography variant="subtitle1">
+                    {formatCurrency(data.itemBasePrice)}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box display="flex" flexDirection="row">
                 <Typography variant="subtitle1">Price</Typography>
                 <Box flexGrow={1} />
                 <Box display="flex" flexDirection="row" gap={1}>
@@ -184,13 +193,13 @@ export const ItemView = ({
                     alignItems="center"
                   >
                     <Avatar
-                      alt={item.itemColor}
-                      src={item.itemImages[0].imgUrl}
+                      alt={item.variantColor}
+                      src={item.variantImages[0].imgUrl}
                       onClick={() => handleSelectVariant(item)}
                       sx={{
                         border:
                           selectedVariant &&
-                          selectedVariant.itemColor === item.itemColor
+                          selectedVariant.variantColor === item.variantColor
                             ? "1px solid black"
                             : "none",
                       }}
@@ -201,7 +210,7 @@ export const ItemView = ({
                         cursor: "pointer",
                       }}
                     >
-                      {item.itemColor}
+                      {item.variantColor}
                     </Typography>
                   </Box>
                 ))}
@@ -209,13 +218,13 @@ export const ItemView = ({
               {/* <Box display="flex" flexDirection="row" alignItems="center">
                 <Typography variant="subtitle1">Color</Typography>
                 <Box flexGrow={1} />
-                <Typography variant="subtitle1">{data.itemColor}</Typography>
+                <Typography variant="subtitle1">{data.variantColor}</Typography>
                 <Box
                   sx={{
                     ml: "10px",
                     width: "20px",
                     height: "20px",
-                    bgcolor: COLORS.find((item) => item.key === data.itemColor)
+                    bgcolor: COLORS.find((item) => item.key === data.variantColor)
                       .hexValue,
                     borderRadius: "50%",
                   }}

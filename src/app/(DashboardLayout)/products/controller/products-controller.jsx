@@ -29,6 +29,9 @@ const validationSchemaUpdate = Yup.object().shape({
 const validationSchemaItem = Yup.object({
   itemTitle: Yup.string().required("Item title is required"),
   itemDescription: Yup.string(),
+  itemBasePrice: Yup.number()
+    .required("Item base price is required")
+    .min(0, "Base cannot be negative"),
   itemPrice: Yup.number()
     .required("Item price is required")
     .min(0, "Price cannot be negative"),
@@ -38,8 +41,8 @@ const validationSchemaItem = Yup.object({
 
   itemVariants: Yup.array().of(
     Yup.object().shape({
-      itemColor: Yup.string().required("Image color is required"),
-      itemSizes: Yup.array().of(
+      variantColor: Yup.string().required("Image color is required"),
+      variantSizes: Yup.array().of(
         Yup.object().shape({
           size: Yup.string().required("Size is required"),
           quantity: Yup.number().required("Quantity is required"),
@@ -49,31 +52,19 @@ const validationSchemaItem = Yup.object({
   ),
   itemInformationSchema: Yup.object().shape({
     material: Yup.string().max(100, "Material cannot exceed 100 characters"),
-
-    color: Yup.string(),
-
     fitType: Yup.string().max(50, "Fit type cannot exceed 50 characters"),
-
     stretch: Yup.string().max(
       50,
       "Stretch description cannot exceed 50 characters"
     ),
-
     style: Yup.string().max(
       50,
       "Style description cannot exceed 50 characters"
     ),
-
     accessories: Yup.string().max(
       100,
       "Accessories description cannot exceed 100 characters"
     ),
-
-    modelSize: Yup.string().max(
-      20,
-      "Model size description cannot exceed 20 characters"
-    ),
-
     washAndCare: Yup.string().max(
       500,
       "Instructions cannot exceed 500 characters"
@@ -94,6 +85,7 @@ const ProductsController = () => {
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedCat, setSelectedCat] = useState(null);
+
   const [images, setImages] = useState([]);
 
   const [isOpenCatAddDialog, setIsOpenCatAddDialog] = useState(false);
@@ -133,17 +125,16 @@ const ProductsController = () => {
     initialValues: {
       itemTitle: "",
       itemDescription: "",
+      itemBasePrice: 0,
       itemPrice: 0,
       itemDiscount: 0,
       itemVariants: [],
       itemInformation: {
         material: "",
-        color: "",
         fitType: "",
         stretch: "",
         style: "",
         accessories: "",
-        modelSize: "",
         washAndCare: "",
       },
     },
