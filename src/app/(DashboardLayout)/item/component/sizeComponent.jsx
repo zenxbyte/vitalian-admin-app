@@ -26,7 +26,7 @@ export const SizeComponent = ({ data }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.itemSizes.map((item, index) => (
+            {data.variantSizes.map((item, index) => (
               <TableRow key={index}>
                 <CustomTableCell>{item.size}</CustomTableCell>
                 <CustomTableCell>{item.quantity}</CustomTableCell>

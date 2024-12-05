@@ -23,7 +23,7 @@ export const AddColorDialog = ({
           continue
         </DialogContentText>
         <TextField
-          name="itemColor"
+          name="VariantColor"
           label="Item Color"
           required
           fullWidth

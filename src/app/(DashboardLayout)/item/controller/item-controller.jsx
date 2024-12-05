@@ -18,6 +18,9 @@ const validationSchemaItem = Yup.object({
   itemTitle: Yup.string().required("Item title is required"),
   itemDescription: Yup.string(),
   itemIsActive: Yup.boolean().required(),
+  itemBasePrice: Yup.number()
+    .required("Item base price is required")
+    .min(0, "Base cannot be negative"),
   itemPrice: Yup.number()
     .required("Item price is required")
     .min(0, "Price cannot be negative"),
@@ -26,43 +29,31 @@ const validationSchemaItem = Yup.object({
     .max(100, "Discount cannot be greater than 100"),
   itemVariants: Yup.array().of(
     Yup.object().shape({
-      itemColor: Yup.string().required("Image color is required"),
-      itemSizes: Yup.array().of(
+      variantColor: Yup.string().required("Image color is required"),
+      variantSizes: Yup.array().of(
         Yup.object().shape({
           size: Yup.string().required("Size is required"),
           quantity: Yup.number().required("Quantity is required"),
         })
       ),
-      itemImages: Yup.array(),
+      variantImages: Yup.array(),
     })
   ),
   itemInformation: Yup.object().shape({
     material: Yup.string().max(100, "Material cannot exceed 100 characters"),
-
-    color: Yup.string(),
-
     fitType: Yup.string().max(50, "Fit type cannot exceed 50 characters"),
-
     stretch: Yup.string().max(
       50,
       "Stretch description cannot exceed 50 characters"
     ),
-
     style: Yup.string().max(
       50,
       "Style description cannot exceed 50 characters"
     ),
-
     accessories: Yup.string().max(
       100,
       "Accessories description cannot exceed 100 characters"
     ),
-
-    modelSize: Yup.string().max(
-      20,
-      "Model size description cannot exceed 20 characters"
-    ),
-
     washAndCare: Yup.string().max(
       500,
       "Instructions cannot exceed 500 characters"
@@ -93,6 +84,7 @@ const ItemController = () => {
     initialValues: {
       itemTitle: "",
       itemDescription: "",
+      itemBasePrice: 0,
       itemPrice: 0,
       itemDiscount: 0,
       itemVariants: [],
@@ -125,9 +117,9 @@ const ItemController = () => {
     if (isOpenUpdateDialog) {
       setImages(
         data.itemVariants.flatMap((item) =>
-          item.itemImages.map((image) => ({
+          item.variantImages.map((image) => ({
             file: null,
-            color: item.itemColor,
+            color: item.variantColor,
             fileUrl: image.imgUrl,
             status: "old",
           }))
@@ -138,6 +130,7 @@ const ItemController = () => {
         itemDescription: data.itemDescription,
         itemIsActive: data.itemIsActive,
         itemVariants: data.itemVariants,
+        itemBasePrice: data.itemBasePrice,
         itemPrice: data.itemPrice,
         itemDiscount: data.itemDiscount,
         itemInformation: data.itemInformation,
@@ -165,11 +158,11 @@ const ItemController = () => {
 
       const updatedVariants = formik.values.itemVariants.map(
         (variant, index) => {
-          const variantColor = variant.itemColor
+          const variantColor = variant.variantColor
             .toLowerCase()
             .replace(/\s/g, "");
 
-          const imgs = (variant.itemImages || [])
+          const imgs = (variant.variantImages || [])
             .filter((image) =>
               image.imgUrl.toLowerCase().includes(variantColor)
             )
@@ -181,7 +174,7 @@ const ItemController = () => {
 
           return {
             ...variant,
-            itemImages: imgs,
+            variantImages: imgs,
           };
         }
       );
@@ -236,9 +229,9 @@ const ItemController = () => {
           setData(res.data.responseData);
           setImages(
             res.data.responseData.itemVariants.flatMap((item) =>
-              item.itemImages.map((image) => ({
+              item.variantImages.map((image) => ({
                 file: null,
-                color: item.itemColor,
+                color: item.variantColor,
                 fileUrl: image.imgUrl,
                 status: "old",
               }))
@@ -251,22 +244,23 @@ const ItemController = () => {
 
           setImgUrls(
             resData.itemVariants.flatMap((variant) =>
-              variant.itemImages.map((image) => image)
+              variant.variantImages.map((image) => image)
             )
           );
 
-          setSelectedImage(resData.itemVariants[0].itemImages[0]);
+          setSelectedImage(resData.itemVariants[0].variantImages[0]);
 
           formik.setValues({
             itemTitle: resData.itemTitle,
             itemDescription: resData.itemDescription,
             itemIsActive: resData.itemIsActive,
             itemVariants: resData.itemVariants,
+            itemBasePrice: resData.itemBasePrice,
             itemPrice: resData.itemPrice,
             itemDiscount: resData.itemDiscount,
             itemInformation: resData.itemInformation,
           });
-          handleImageClick(res.data.responseData.itemImages[0]);
+          handleImageClick(res.data.responseData.variantImages[0]);
         }
       })
       .catch(() => {

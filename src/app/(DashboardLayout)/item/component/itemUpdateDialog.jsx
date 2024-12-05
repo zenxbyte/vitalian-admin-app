@@ -15,11 +15,6 @@ import {
   Toolbar,
   Typography,
   Slide,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Switch,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,9 +24,9 @@ import { AddCircleRounded } from "@mui/icons-material";
 
 import { CurrencyInput } from "@/components/currency-input/currency-input";
 import DropFileContainer from "@/components/DropFileContainer/dropFileContainer";
-import { COLORS } from "@/constants/colors-constatns";
 import { SelectSizeDialog } from "../../products/components/selectSizeDialog";
 import { AddColorDialog } from "./addColorDialog";
+import { ConfirmationDialog } from "@/components/confirmation-dialog/confirmation-dialog";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -87,13 +82,13 @@ export const ItemUpdateDialog = ({
 
   const handleAddVariant = () => {
     const isExist = values.itemVariants.find(
-      (item) => item.itemColor === color
+      (item) => item.variantColor === color
     );
 
     if (!isExist) {
       setFieldValue("itemVariants", [
         ...values.itemVariants,
-        { itemColor: color, itemSizes: [] },
+        { _id: null, variantColor: color, variantSizes: [] },
       ]);
       handleOpenCloseColorDialog();
     }
@@ -101,14 +96,14 @@ export const ItemUpdateDialog = ({
 
   const handleSelectSize = (e) => {
     const isExist =
-      values.itemVariants[selectedVariant].itemSizes &&
-      values.itemVariants[selectedVariant].itemSizes.find(
+      values.itemVariants[selectedVariant].variantSizes &&
+      values.itemVariants[selectedVariant].variantSizes.find(
         (item) => item.size === e.target.value
       );
 
     if (!isExist) {
-      setFieldValue(`itemVariants[${selectedVariant}].itemSizes`, [
-        ...values.itemVariants[selectedVariant].itemSizes,
+      setFieldValue(`itemVariants[${selectedVariant}].variantSizes`, [
+        ...values.itemVariants[selectedVariant].variantSizes,
         { size: e.target.value, availability: true, quantity: 0 },
       ]);
       handleOpenCloseSizeDialog();
@@ -116,10 +111,10 @@ export const ItemUpdateDialog = ({
   };
 
   const handleRemoveSize = (variantIndex, index) => {
-    const updatedSizes = values.itemVariants[variantIndex].itemSizes.filter(
+    const updatedSizes = values.itemVariants[variantIndex].variantSizes.filter(
       (_, i) => i !== index
     );
-    setFieldValue(`itemVariants[${variantIndex}].itemSizes`, updatedSizes);
+    setFieldValue(`itemVariants[${variantIndex}].variantSizes`, updatedSizes);
   };
 
   return (
@@ -184,6 +179,19 @@ export const ItemUpdateDialog = ({
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <CurrencyInput
+                label="Item Base Price"
+                name="itemBasePrice"
+                fullWidth
+                required
+                autoComplete="off"
+                variant="outlined"
+                {...getFieldProps("itemBasePrice")}
+                error={Boolean(touched.itemBasePrice && errors.itemBasePrice)}
+                helperText={touched.itemBasePrice && errors.itemBasePrice}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <CurrencyInput
                 label="Item Price"
                 name="itemPrice"
                 fullWidth
@@ -230,14 +238,6 @@ export const ItemUpdateDialog = ({
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
-                name="itemInformation.color"
-                label="Color"
-                fullWidth
-                {...getFieldProps("itemInformation.color")}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
                 name="itemInformation.fitType"
                 label="Fit Type"
                 fullWidth
@@ -266,14 +266,6 @@ export const ItemUpdateDialog = ({
                 label="Accessories"
                 fullWidth
                 {...getFieldProps("itemInformation.accessories")}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField
-                name="itemInformation.modelSize"
-                label="Model Size"
-                fullWidth
-                {...getFieldProps("itemInformation.modelSize")}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -315,13 +307,13 @@ export const ItemUpdateDialog = ({
                             alignItems="center"
                           >
                             <Typography variant="h6">
-                              COLOR : {item.itemColor.toUpperCase()}
+                              COLOR : {item.variantColor.toUpperCase()}
                             </Typography>
                             <Box display="flex" flexDirection="row" gap={2}>
                               <Button
                                 variant="outlined"
                                 onClick={() =>
-                                  handleOpenCloseImgDialog(item.itemColor)
+                                  handleOpenCloseImgDialog(item.variantColor)
                                 }
                               >
                                 Add Images
@@ -340,7 +332,7 @@ export const ItemUpdateDialog = ({
                           <ImageList cols={4}>
                             {images.map((img, imgIndex) => {
                               const filteredImages =
-                                img.color === item.itemColor;
+                                img.color === item.variantColor;
 
                               if (filteredImages) {
                                 return (
@@ -377,9 +369,10 @@ export const ItemUpdateDialog = ({
                           </ImageList>
                         </Grid>
                         <Grid size={{ xs: 12, sm: 4 }}>
-                          {values.itemVariants[index].itemSizes.length > 0 && (
+                          {values.itemVariants[index].variantSizes.length >
+                            0 && (
                             <Box display="flex" flexDirection="column" gap={2}>
-                              {values.itemVariants[index].itemSizes.map(
+                              {values.itemVariants[index].variantSizes.map(
                                 (item, subIndex) => (
                                   <Box
                                     key={subIndex}
@@ -398,52 +391,50 @@ export const ItemUpdateDialog = ({
                                     >
                                       <TextField
                                         type="number"
-                                        name={`itemVariants[${index}].itemSizes[${subIndex}].quantity`}
+                                        name={`itemVariants[${index}].variantSizes[${subIndex}].quantity`}
                                         label="Quantity"
                                         fullWidth
                                         inputProps={{ min: 0 }}
                                         sx={{ maxWidth: "200px" }}
                                         {...getFieldProps(
-                                          `itemVariants[${index}].itemSizes[${subIndex}].quantity`
+                                          `itemVariants[${index}].variantSizes[${subIndex}].quantity`
                                         )}
                                         error={Boolean(
                                           touched.itemVariants &&
                                             touched.itemVariants[index] &&
                                             touched.itemVariants[index]
-                                              .itemSizes &&
+                                              .variantSizes &&
                                             touched.itemVariants[index]
-                                              .itemSizes[subIndex] &&
+                                              .variantSizes[subIndex] &&
                                             touched.itemVariants[index]
-                                              .itemSizes[subIndex].quantity &&
+                                              .variantSizes[subIndex]
+                                              .quantity &&
                                             errors.itemVariants &&
                                             errors.itemVariants[index] &&
                                             errors.itemVariants[index]
-                                              .itemSizes &&
+                                              .variantSizes &&
                                             errors.itemVariants[index]
-                                              .itemSizes[subIndex] &&
+                                              .variantSizes[subIndex] &&
                                             errors.itemVariants[index]
-                                              .itemSizes[subIndex].quantity
+                                              .variantSizes[subIndex].quantity
                                         )}
                                         helperText={
                                           touched.itemVariants &&
                                           touched.itemVariants[index] &&
                                           touched.itemVariants[index]
-                                            .itemSizes &&
-                                          touched.itemVariants[index].itemSizes[
-                                            subIndex
-                                          ] &&
+                                            .variantSizes &&
+                                          touched.itemVariants[index]
+                                            .variantSizes[subIndex] &&
                                           errors.itemVariants &&
                                           errors.itemVariants[index] &&
                                           errors.itemVariants[index]
-                                            .itemSizes &&
-                                          errors.itemVariants[index].itemSizes[
-                                            subIndex
-                                          ] &&
-                                          errors.itemVariants[index].itemSizes[
-                                            subIndex
-                                          ].quantity
+                                            .variantSizes &&
+                                          errors.itemVariants[index]
+                                            .variantSizes[subIndex] &&
+                                          errors.itemVariants[index]
+                                            .variantSizes[subIndex].quantity
                                             ? errors.itemVariants[index]
-                                                .itemSizes[subIndex].quantity
+                                                .variantSizes[subIndex].quantity
                                             : ""
                                         }
                                       />
