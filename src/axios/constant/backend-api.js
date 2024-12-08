@@ -17,4 +17,5 @@ export const BACKEND_API = {
   ITEM_UPDATE: IP_URL + "item/auth/update/",
 
   ORDERS: IP_URL + "order/auth/filter",
+  ORDER: IP_URL + "order/auth/details/",
 };
