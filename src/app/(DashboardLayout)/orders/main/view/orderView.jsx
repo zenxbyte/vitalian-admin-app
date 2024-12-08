@@ -50,14 +50,13 @@ export const OrderView = ({
   handleSelectOptions,
   handleChangeSearch,
   deleteFilter,
+  handleOnClickRow,
   limit,
   page,
   documentCount,
   handleChangePage,
   handleChangeRowsPerPage,
 }) => {
-  console.log(data);
-
   return (
     <PageContainer title="Order">
       <Container>
@@ -167,7 +166,10 @@ export const OrderView = ({
                     {!isLoading && data.length > 0 && (
                       <>
                         {data.map((item, index) => (
-                          <TableRow key={index}>
+                          <TableRow
+                            key={index}
+                            onClick={() => handleOnClickRow(item._id)}
+                          >
                             <TableCell>{item.orderId}</TableCell>
                             <TableCell>{`${item.customer.firstName} ${item.customer.lastName}`}</TableCell>
                             <TableCell>{item.customer.phone}</TableCell>
@@ -188,7 +190,7 @@ export const OrderView = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-              {data.length > 20 && (
+              {data.length > 10 && (
                 <TablePagination
                   page={page}
                   component="div"

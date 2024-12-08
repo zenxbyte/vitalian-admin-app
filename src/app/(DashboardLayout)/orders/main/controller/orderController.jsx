@@ -1,14 +1,18 @@
 "use client";
 
 import axios from "axios";
-import { OrderView } from "../view/orderView.jsx";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { OrderView } from "../view/orderView.jsx";
 import { backendAuthApi } from "@/axios/instance/backend-axios-instance.js";
 import { BACKEND_API } from "@/axios/constant/backend-api.js";
 import responseUtil from "@/utils/responseUtil.js";
 import { SORT_BY } from "@/constants/sort-constants.js";
 
 const OrderController = () => {
+  const router = useRouter();
+
   const sourceToken = axios.CancelToken.source();
 
   const [limit, setLimit] = useState(20);
@@ -60,6 +64,10 @@ const OrderController = () => {
     setLimit(parseInt(event.target.value, 10));
   };
 
+  const handleOnClickRow = (id) => {
+    router.push("orders/details?id=" + id);
+  };
+
   const handleFetchOrders = async () => {
     setIsLoading(true);
 
@@ -101,6 +109,7 @@ const OrderController = () => {
       handleSelectOptions={handleSelectOptions}
       handleChangeSearch={handleChangeSearch}
       deleteFilter={deleteFilter}
+      handleOnClickRow={handleOnClickRow}
       limit={limit}
       page={page}
       documentCount={documentCount}

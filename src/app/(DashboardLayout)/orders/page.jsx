@@ -1,3 +1,3 @@
-import OrderController from "./controller/orderController";
+import OrderController from "./main/controller/orderController";
 
 export default OrderController;
