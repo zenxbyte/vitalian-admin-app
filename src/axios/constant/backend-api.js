@@ -18,4 +18,7 @@ export const BACKEND_API = {
 
   ORDERS: IP_URL + "order/auth/filter",
   ORDER: IP_URL + "order/auth/details/",
+
+  ORDER_RECENT_TRANSACTIONS: IP_URL + "order/auth/transactions",
+  ORDER_RECENT_ORDERS: IP_URL + "order/auth/recent-orders",
 };
