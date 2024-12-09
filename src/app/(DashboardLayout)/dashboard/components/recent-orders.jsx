@@ -66,7 +66,6 @@ export const RecentOrders = ({ data, isLoading, count }) => {
                         <TableCell>
                           <Typography
                             sx={{
-                              fontSize: "15px",
                               fontWeight: "500",
                             }}
                           >

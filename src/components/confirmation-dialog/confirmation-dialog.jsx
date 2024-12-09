@@ -18,9 +18,7 @@ export const ConfirmationDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">
-        Are you sure that you want to delete this section?
-      </DialogTitle>
+      <DialogTitle id="alert-dialog-title">Delete Confirmation</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to delete this item? This action cannot be

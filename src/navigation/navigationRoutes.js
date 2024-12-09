@@ -13,4 +13,7 @@ export const NAVIGATION_ROUTES = {
     base: "/orders",
     id: "/orders?id=",
   },
+  users: {
+    base: "/users",
+  },
 };

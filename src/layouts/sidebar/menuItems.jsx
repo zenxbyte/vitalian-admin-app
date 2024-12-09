@@ -1,6 +1,7 @@
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { NAVIGATION_ROUTES } from "../../navigation/navigationRoutes";
 
@@ -27,6 +28,15 @@ const Menuitems = [
     title: "Orders",
     icon: LocalShippingIcon,
     href: NAVIGATION_ROUTES.orders.base,
+  },
+  {
+    navlabel: true,
+    subheader: "Admin",
+  },
+  {
+    title: "Users",
+    icon: AccountCircleIcon,
+    href: NAVIGATION_ROUTES.users.base,
   },
 ];
 

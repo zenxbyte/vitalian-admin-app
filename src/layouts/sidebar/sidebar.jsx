@@ -2,10 +2,10 @@ import React from "react";
 
 import Drawer from "@mui/material/Drawer";
 import SidebarItems from "./sideBarItems/sideBarItems";
-import { Box } from "@mui/material";
 
 const SideBar = ({ isOpen, toggleDrawer }) => {
   const drawerWidth = 280;
+
   return (
     <Drawer
       open={isOpen}
@@ -19,7 +19,7 @@ const SideBar = ({ isOpen, toggleDrawer }) => {
         },
       }}
     >
-      <SidebarItems />
+      <SidebarItems toggleMobileSidebar={toggleDrawer} />
     </Drawer>
   );
 };
