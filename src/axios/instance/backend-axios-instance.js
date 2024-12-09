@@ -6,6 +6,7 @@ import commonUtil from "@/utils/common-util";
 import responseUtil from "@/utils/responseUtil";
 import useSnackbarStore from "@/store/notification-store";
 import useAuthStore from "@/store/auth-store";
+import { useRouter } from "next/navigation";
 
 export const backendAuthApi = axios.create({
   // one minute timeout
@@ -27,6 +28,7 @@ backendAuthApi.interceptors.response.use(
     return response;
   },
   (error) => {
+    const router = useRouter();
     const { logoutUser } = useAuthStore.getState();
     const { enqueueSnackbar } = useSnackbarStore.getState();
 
@@ -48,6 +50,7 @@ backendAuthApi.interceptors.response.use(
           )
         ) {
           logoutUser();
+          router.push("/login");
           enqueueSnackbar({
             message: errorMessage,
             options: {

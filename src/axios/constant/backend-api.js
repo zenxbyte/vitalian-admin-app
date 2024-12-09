@@ -7,6 +7,10 @@ export const BACKEND_API = {
   LOGIN: IP_URL + "authentication/noAuth/login",
   LOGOUT: IP_URL + "authentication/auth/logout",
 
+  ADMIN_ALL: IP_URL + "user/auth/all",
+  ADMIN_CREATE: IP_URL + "user/auth/create",
+  ADMIN_DELETE: IP_URL + "user/auth/delete/",
+
   PRODUCT_CAT_GET: IP_URL + "category/noAuth/categories",
   PRODUCT_CAT_CREATE: IP_URL + "category/auth/",
   PRODUCT_CAT_UPDATE: IP_URL + "category/auth/",
