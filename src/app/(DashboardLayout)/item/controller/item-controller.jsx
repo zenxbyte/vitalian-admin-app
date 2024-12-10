@@ -84,6 +84,7 @@ const ItemController = () => {
     initialValues: {
       itemTitle: "",
       itemDescription: "",
+      itemIsActive: true,
       itemBasePrice: 0,
       itemPrice: 0,
       itemDiscount: 0,

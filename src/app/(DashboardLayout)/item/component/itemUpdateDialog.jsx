@@ -15,18 +15,20 @@ import {
   Toolbar,
   Typography,
   Slide,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import CloseIcon from "@mui/icons-material/Close";
 import CancelIcon from "@mui/icons-material/Cancel";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { AddCircleRounded } from "@mui/icons-material";
 
 import { CurrencyInput } from "@/components/currency-input/currency-input";
 import DropFileContainer from "@/components/DropFileContainer/dropFileContainer";
 import { SelectSizeDialog } from "../../products/components/selectSizeDialog";
 import { AddColorDialog } from "./addColorDialog";
-import { ConfirmationDialog } from "@/components/confirmation-dialog/confirmation-dialog";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -41,7 +43,15 @@ export const ItemUpdateDialog = ({
   isLoading,
   handleSubmit,
 }) => {
-  const { touched, errors, getFieldProps, values, setFieldValue } = formik;
+  const {
+    touched,
+    errors,
+    getFieldProps,
+    values,
+    setFieldValue,
+    handleChange,
+    handleBlur,
+  } = formik;
 
   const [color, setColor] = useState("");
   const [selectedVariant, setSelectedVariant] = useState(null);
@@ -177,7 +187,24 @@ export const ItemUpdateDialog = ({
                 helperText={touched.itemDescription && errors.itemDescription}
               />
             </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 3 }}>
+              <FormControl fullWidth>
+                <InputLabel id="select-label">Status</InputLabel>
+                <Select
+                  labelId="select-label"
+                  id="simple-select"
+                  label="Status"
+                  name="itemIsActive"
+                  value={values.itemIsActive}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                >
+                  <MenuItem value={true}>Active</MenuItem>
+                  <MenuItem value={false}>Not Active</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12, md: 3 }}>
               <CurrencyInput
                 label="Item Base Price"
                 name="itemBasePrice"
