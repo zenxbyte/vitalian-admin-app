@@ -173,8 +173,12 @@ export const OrderView = ({
                             <TableCell>{item.orderId}</TableCell>
                             <TableCell>{`${item.customer.firstName} ${item.customer.lastName}`}</TableCell>
                             <TableCell>{item.customer.phone}</TableCell>
-                            <TableCell>{item.deliveryInfo.city}</TableCell>
-                            <TableCell>{item.deliveryInfo.district}</TableCell>
+                            <TableCell>
+                              {item.deliveryInfo.city.city_name}
+                            </TableCell>
+                            <TableCell>
+                              {item.deliveryInfo.district.district_name}
+                            </TableCell>
                             <TableCell>
                               {formatCurrency(item.orderTotal)}
                             </TableCell>

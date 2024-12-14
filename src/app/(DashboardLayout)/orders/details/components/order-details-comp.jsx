@@ -40,7 +40,7 @@ export const OrderDetailsComp = ({ data }) => {
           </TableRow>
           <TableRow>
             <TableCell>Address</TableCell>
-            <TableCell>{`${data.deliveryInfo.address}, ${data.deliveryInfo.city}, ${data.deliveryInfo.district}, ${data.deliveryInfo.postalCode}, ${data.deliveryInfo.country}`}</TableCell>
+            <TableCell>{`${data.deliveryInfo.address}, ${data.deliveryInfo.city.city_name}, ${data.deliveryInfo.district.district_name}, ${data.deliveryInfo.postalCode}, ${data.deliveryInfo.country}`}</TableCell>
           </TableRow>
           {data.deliveryInfo.company && (
             <TableRow>
