@@ -22,7 +22,12 @@ export const BACKEND_API = {
 
   ORDERS: IP_URL + "order/auth/filter",
   ORDER: IP_URL + "order/auth/details/",
+  ORDER_STAT_COUNT: IP_URL + "order/auth/stat-count",
 
   ORDER_RECENT_TRANSACTIONS: IP_URL + "order/auth/transactions",
   ORDER_RECENT_ORDERS: IP_URL + "order/auth/recent-orders",
+  ORDER_RECENT_PICK_RQSTS: IP_URL + "order/auth/recent-pickup-rqsts",
+  ORDER_UPDATE_STATUS: IP_URL + "order/auth/update-status",
+  ORDER_CREATE_DELIVERY: IP_URL + "order/auth/create-delivery-orders",
+  ORDER_PICK_UP_REQUEST: IP_URL + "order/auth/request-pickup",
 };
