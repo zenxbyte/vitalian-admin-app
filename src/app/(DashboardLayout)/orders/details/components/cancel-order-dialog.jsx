@@ -5,37 +5,13 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import {
-  ORDER_STATUS_DELIVERED,
-  ORDER_STATUS_OUT_DELIVERY,
-  ORDER_STATUS_PACKED,
-  ORDER_STATUS_PENDING,
-  ORDER_STATUS_PROCESSING,
-  ORDER_STATUS_WAITING,
-} from "@/constants/order-status";
 
-export const UpdateStatusDialog = ({
+export const CancelOrderDialog = ({
   open,
-  filter,
   handleOpenClose,
   handleConfirm,
   isLoading,
 }) => {
-  const filterChangeTo = () => {
-    switch (filter) {
-      case ORDER_STATUS_PENDING:
-        return ORDER_STATUS_PROCESSING;
-      case ORDER_STATUS_PROCESSING:
-        return ORDER_STATUS_PACKED;
-      case ORDER_STATUS_WAITING:
-        return ORDER_STATUS_OUT_DELIVERY;
-      case ORDER_STATUS_OUT_DELIVERY:
-        return ORDER_STATUS_DELIVERED;
-      default:
-        return "None";
-    }
-  };
-
   return (
     <Dialog
       open={open}
@@ -43,13 +19,11 @@ export const UpdateStatusDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">
-        Update Status Confirmation
-      </DialogTitle>
+      <DialogTitle id="alert-dialog-title">Cancel Order</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Are you sure you want to update the status of this orders? This action
-          cannot be undone. From <b>{filter}</b> to <b>{filterChangeTo()}</b>
+          Are you sure you want to cancel this order? This action cannot be
+          undone.
         </DialogContentText>
       </DialogContent>
       <DialogActions>

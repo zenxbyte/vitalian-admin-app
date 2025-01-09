@@ -14,7 +14,7 @@ import Cropper from "react-easy-crop";
 import cropImageUtil from "../../utils/cropImageUtil.js";
 import commonUtil from "@/utils/common-util.js";
 
-const DropFileContainer = ({ open, onClose, onSave, color }) => {
+const DropFileContainer = ({ open, onClose, onSave, color, type = "item" }) => {
   const [imageSrc, setImageSrc] = useState(null);
   const [fileName, setFileName] = useState("");
   const [originalFileType, setOriginalFileType] = useState("");
@@ -24,7 +24,10 @@ const DropFileContainer = ({ open, onClose, onSave, color }) => {
 
   // Handles image file upload
   const handleFileChange = (event) => {
-    const file = commonUtil.createImgFileName(color, event.target.files[0]);
+    const file =
+      type === "item"
+        ? commonUtil.createImgFileName(color, event.target.files[0])
+        : event.target.files[0];
 
     setFileName(file.name);
 
@@ -77,7 +80,7 @@ const DropFileContainer = ({ open, onClose, onSave, color }) => {
               component="label"
               startIcon={<PhotoCamera />}
             >
-              Upload Image
+              {type === "item" ? "Upload Image" : "Upload Size Chart"}
               <input
                 type="file"
                 hidden
@@ -93,7 +96,7 @@ const DropFileContainer = ({ open, onClose, onSave, color }) => {
                 image={imageSrc}
                 crop={crop}
                 zoom={zoom}
-                aspect={3 / 4} // Aspect ratio 3:4
+                aspect={type === "item" ? 3 / 4 : 4 / 3} // Aspect ratio 3:4 is item image, chart image 4 / 3
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
