@@ -127,7 +127,7 @@ const ItemController = () => {
           }))
         )
       );
-      if (data.itemSizeChart.imgUrl) {
+      if (data.itemSizeChart && data.itemSizeChart.imgUrl) {
         setSizeChart({
           file: null,
           color: null,
@@ -252,7 +252,7 @@ const ItemController = () => {
               }))
             )
           );
-          if (resData.itemSizeChart.imgUrl) {
+          if (resData.itemSizeChart && resData.itemSizeChart.imgUrl) {
             setSizeChart({
               file: null,
               color: null,
