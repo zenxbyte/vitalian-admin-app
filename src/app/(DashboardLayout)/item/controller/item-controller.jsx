@@ -73,6 +73,7 @@ const ItemController = () => {
   const [imgUrls, setImgUrls] = useState([]);
 
   const [images, setImages] = useState([]);
+  const [sizeChart, setSizeChart] = useState(null);
   const [selectedImage, setSelectedImage] = useState([null]);
 
   const [isOpenUpdateDialog, setIsOpenUpdateDialog] = useState(false);
@@ -126,6 +127,15 @@ const ItemController = () => {
           }))
         )
       );
+      if (data.itemSizeChart.imgUrl) {
+        setSizeChart({
+          file: null,
+          color: null,
+          fileUrl: data.itemSizeChart.imgUrl,
+          status: "old",
+        });
+      }
+
       formik.setValues({
         itemTitle: data.itemTitle,
         itemDescription: data.itemDescription,
@@ -186,6 +196,9 @@ const ItemController = () => {
           formdata.append("file", item.file);
         }
       });
+      if (sizeChart && sizeChart?.status === "new") {
+        formdata.append("chart", sizeChart.file);
+      }
       const body = JSON.stringify({
         ...formik.values,
         itemVariants: updatedVariants,
@@ -227,9 +240,10 @@ const ItemController = () => {
     })
       .then((res) => {
         if (responseUtil.isResponseSuccess(res.data.responseCode)) {
-          setData(res.data.responseData);
+          const resData = res.data.responseData;
+          setData(resData);
           setImages(
-            res.data.responseData.itemVariants.flatMap((item) =>
+            resData.itemVariants.flatMap((item) =>
               item.variantImages.map((image) => ({
                 file: null,
                 color: item.variantColor,
@@ -238,8 +252,14 @@ const ItemController = () => {
               }))
             )
           );
-
-          const resData = res.data.responseData;
+          if (resData.itemSizeChart.imgUrl) {
+            setSizeChart({
+              file: null,
+              color: null,
+              fileUrl: resData.itemSizeChart.imgUrl,
+              status: "old",
+            });
+          }
 
           //setSelectedVariant(res.data.responseData.itemVariants[0]);
 
@@ -288,6 +308,8 @@ const ItemController = () => {
       selectedVariant={selectedVariant}
       handleSelectVariant={handleSelectVariant}
       setImages={setImages}
+      sizeChart={sizeChart}
+      setSizeChart={setSizeChart}
       selectedImage={selectedImage}
       handleImageClick={handleImageClick}
       isOpenUpdateDialog={isOpenUpdateDialog}

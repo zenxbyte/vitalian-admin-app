@@ -19,19 +19,18 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TablePagination,
   TableRow,
   TextField,
-  Toolbar,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { CustomTableHead } from "@/components/custom-table/custom-table-head";
 import {
-  ORDER_DELIVERY_CREATED,
   ORDER_STATUS,
+  ORDER_STATUS_DELIVERY_CREATED,
+  ORDER_STATUS_OUT_DELIVERY,
   ORDER_STATUS_PACKED,
   ORDER_STATUS_PENDING,
   ORDER_STATUS_PROCESSING,
@@ -205,24 +204,21 @@ export const OrderView = ({
                       <Typography variant="h6">ORDERS</Typography>
                     )}
                     {!matchDownSM && <Box flexGrow={1} />}
-                    {selectedFilters.orderStatus === ORDER_STATUS_PENDING &&
-                      selectedRows.length > 0 && (
-                        <Button
-                          variant="outlined"
-                          onClick={handleOpenCloseUpdateDialog}
-                        >
-                          Update Status
-                        </Button>
-                      )}
-                    {selectedFilters.orderStatus === ORDER_STATUS_PROCESSING &&
-                      selectedRows.length > 0 && (
-                        <Button
-                          variant="outlined"
-                          onClick={handleOpenCloseUpdateDialog}
-                        >
-                          Update Status
-                        </Button>
-                      )}
+                    {[
+                      ORDER_STATUS_PENDING,
+                      ORDER_STATUS_PROCESSING,
+                      ORDER_STATUS_WAITING,
+                      ORDER_STATUS_OUT_DELIVERY,
+                    ].includes(selectedFilters.orderStatus) && (
+                      <Button
+                        variant="outlined"
+                        disabled={selectedRows.length === 0}
+                        onClick={handleOpenCloseUpdateDialog}
+                      >
+                        Update Status
+                      </Button>
+                    )}
+
                     {selectedFilters.orderStatus === ORDER_STATUS_PACKED && (
                       <Button
                         variant="outlined"
@@ -231,7 +227,8 @@ export const OrderView = ({
                         Create Delivery Oders
                       </Button>
                     )}
-                    {selectedFilters.orderStatus === ORDER_DELIVERY_CREATED && (
+                    {selectedFilters.orderStatus ===
+                      ORDER_STATUS_DELIVERY_CREATED && (
                       <Button
                         variant="outlined"
                         onClick={handleOpenClosePickUpReqestDialog}
@@ -264,6 +261,8 @@ export const OrderView = ({
                                   {[
                                     ORDER_STATUS_PROCESSING,
                                     ORDER_STATUS_PENDING,
+                                    ORDER_STATUS_WAITING,
+                                    ORDER_STATUS_OUT_DELIVERY,
                                   ].includes(selectedFilters.orderStatus) && (
                                     <Checkbox
                                       color="primary"

@@ -30,4 +30,6 @@ export const BACKEND_API = {
   ORDER_UPDATE_STATUS: IP_URL + "order/auth/update-status",
   ORDER_CREATE_DELIVERY: IP_URL + "order/auth/create-delivery-orders",
   ORDER_PICK_UP_REQUEST: IP_URL + "order/auth/request-pickup",
+  ORDER_CANCEL: IP_URL + "order/auth/cancel-order/",
+  ORDER_UPDATE_PAYMENT_STATUS: IP_URL + "order/auth/update-payment-status",
 };

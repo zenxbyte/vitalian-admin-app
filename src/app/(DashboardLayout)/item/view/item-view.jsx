@@ -31,6 +31,8 @@ export const ItemView = ({
   images,
   imgUrls,
   setImages,
+  sizeChart,
+  setSizeChart,
   selectedVariant,
   handleSelectVariant,
   selectedImage,
@@ -319,6 +321,8 @@ export const ItemView = ({
           handleClose={handleOpenCloseItemUpdateDialog}
           images={images}
           setImages={setImages}
+          sizeChart={sizeChart}
+          setSizeChart={setSizeChart}
           handleSubmit={handleUpdateItem}
           isLoading={isLoadingUpdate}
         />

@@ -30,6 +30,8 @@ export const ProductsView = ({
   handleSelectCat,
   images,
   setImages,
+  sizeChart,
+  setSizeChart,
   formikCreate,
   formikUpdate,
   formikAddItem,
@@ -223,6 +225,8 @@ export const ProductsView = ({
           formik={formikAddItem}
           images={images}
           setImages={setImages}
+          sizeChart={sizeChart}
+          setSizeChart={setSizeChart}
           isLoading={isLoadingAddItem}
           handleSubmit={handleAddItem}
         />

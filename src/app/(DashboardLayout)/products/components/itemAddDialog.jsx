@@ -19,7 +19,6 @@ import {
 import Grid from "@mui/material/Grid2";
 import CloseIcon from "@mui/icons-material/Close";
 import CancelIcon from "@mui/icons-material/Cancel";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { AddCircleRounded } from "@mui/icons-material";
 
 import { CurrencyInput } from "@/components/currency-input/currency-input";
@@ -37,6 +36,8 @@ export const ItemAddDialog = ({
   handleClose,
   images,
   setImages,
+  sizeChart,
+  setSizeChart,
   formik,
   isLoading,
   handleSubmit,
@@ -49,6 +50,7 @@ export const ItemAddDialog = ({
 
   const [isOpenColorDlg, setIsOpenColorDlg] = useState(false);
   const [isOpenImgDlg, setIsOpenImgDlg] = useState(false);
+  const [isOpenChartImgDlg, setIsOpenChartImgDlg] = useState(false);
   const [isOpenSizeDlg, setIsOpenSizeDlg] = useState(false);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
 
@@ -60,9 +62,21 @@ export const ItemAddDialog = ({
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  const handleAddSizeChart = (chartImg) => {
+    setSizeChart(chartImg);
+  };
+
+  const handleRemoveChart = () => {
+    setSizeChart(null);
+  };
+
   const handleOpenCloseImgDialog = (color) => {
     setSelectedColor(isOpenImgDlg ? null : color);
     setIsOpenImgDlg(!isOpenImgDlg);
+  };
+
+  const handleOpenCloseChartImgDialog = () => {
+    setIsOpenChartImgDlg(!isOpenChartImgDlg);
   };
 
   const handleOpenCloseColorDialog = () => {
@@ -245,6 +259,51 @@ export const ItemAddDialog = ({
                 helperText={touched.itemDiscount && errors.itemDiscount}
               />
             </Grid>
+            <Grid size={{ xs: 9, md: 11 }}>
+              <Typography variant="h6">Size Chart</Typography>
+            </Grid>
+            <Grid size={{ xs: 3, md: 1 }}>
+              <Button
+                fullWidth
+                startIcon={<AddCircleRounded />}
+                variant="contained"
+                onClick={handleOpenCloseChartImgDialog}
+              >
+                Add
+              </Button>
+            </Grid>
+            {sizeChart && (
+              <Grid size={{ xs: 12, sm: 12 }}>
+                <ImageList cols={4}>
+                  <ImageListItem>
+                    <img
+                      src={sizeChart?.fileUrl}
+                      alt={"Image"}
+                      loading="lazy"
+                    />
+                    <ImageListItemBar
+                      sx={{
+                        background:
+                          "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, " +
+                          "rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)",
+                      }}
+                      title="Size Chart"
+                      position="top"
+                      actionIcon={
+                        <IconButton
+                          sx={{ color: "white" }}
+                          onClick={() => handleRemoveChart()}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      }
+                      actionPosition="left"
+                    />
+                  </ImageListItem>
+                </ImageList>
+              </Grid>
+            )}
+
             <Grid size={{ xs: 12, md: 12 }}>
               <Typography variant="h6">Other Informations</Typography>
             </Grid>
@@ -494,6 +553,15 @@ export const ItemAddDialog = ({
           onClose={handleOpenCloseImgDialog}
           onSave={handleAddImage}
           color={selectedColor}
+        />
+      )}
+      {isOpenChartImgDlg && (
+        <DropFileContainer
+          open={isOpenChartImgDlg}
+          onClose={handleOpenCloseChartImgDialog}
+          onSave={handleAddSizeChart}
+          type="chart"
+          color={null}
         />
       )}
       {isOpenColorDlg && (
