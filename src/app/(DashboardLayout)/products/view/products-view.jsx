@@ -32,6 +32,8 @@ export const ProductsView = ({
   setImages,
   sizeChart,
   setSizeChart,
+  videoClip,
+  setVideoClip,
   formikCreate,
   formikUpdate,
   formikAddItem,
@@ -226,6 +228,8 @@ export const ProductsView = ({
           images={images}
           setImages={setImages}
           sizeChart={sizeChart}
+          videoClip={videoClip}
+          setVideoClip={setVideoClip}
           setSizeChart={setSizeChart}
           isLoading={isLoadingAddItem}
           handleSubmit={handleAddItem}

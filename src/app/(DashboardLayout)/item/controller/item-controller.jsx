@@ -75,6 +75,7 @@ const ItemController = () => {
   const [images, setImages] = useState([]);
   const [sizeChart, setSizeChart] = useState(null);
   const [selectedImage, setSelectedImage] = useState([null]);
+  const [videoClip, setVideoClip] = useState(null);
 
   const [isOpenUpdateDialog, setIsOpenUpdateDialog] = useState(false);
 
@@ -132,6 +133,14 @@ const ItemController = () => {
           file: null,
           color: null,
           fileUrl: data.itemSizeChart.imgUrl,
+          status: "old",
+        });
+      }
+
+      if (data.itemVideoClip && data.itemVideoClip.videoUrl) {
+        setVideoClip({
+          file: null,
+          url: data.itemVideoClip.videoUrl,
           status: "old",
         });
       }
@@ -199,6 +208,9 @@ const ItemController = () => {
       if (sizeChart && sizeChart?.status === "new") {
         formdata.append("chart", sizeChart.file);
       }
+      if (videoClip && videoClip?.status === "new") {
+        formdata.append("video", videoClip.file);
+      }
       const body = JSON.stringify({
         ...formik.values,
         itemVariants: updatedVariants,
@@ -249,6 +261,7 @@ const ItemController = () => {
                 color: item.variantColor,
                 fileUrl: image.imgUrl,
                 status: "old",
+                type: image.type,
               }))
             )
           );
@@ -257,6 +270,14 @@ const ItemController = () => {
               file: null,
               color: null,
               fileUrl: resData.itemSizeChart.imgUrl,
+              status: "old",
+            });
+          }
+
+          if (resData.itemVideoClip && resData.itemVideoClip.videoUrl) {
+            setVideoClip({
+              file: null,
+              url: resData.itemVideoClip.videoUrl,
               status: "old",
             });
           }
@@ -311,6 +332,8 @@ const ItemController = () => {
       sizeChart={sizeChart}
       setSizeChart={setSizeChart}
       selectedImage={selectedImage}
+      videoClip={videoClip}
+      setVideoClip={setVideoClip}
       handleImageClick={handleImageClick}
       isOpenUpdateDialog={isOpenUpdateDialog}
       handleOpenCloseItemUpdateDialog={handleOpenCloseItemUpdateDialog}
