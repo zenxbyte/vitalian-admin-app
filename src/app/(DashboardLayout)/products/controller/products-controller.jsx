@@ -88,6 +88,7 @@ const ProductsController = () => {
 
   const [images, setImages] = useState([]);
   const [sizeChart, setSizeChart] = useState(null);
+  const [videoClip, setVideoClip] = useState(null);
 
   const [isOpenCatAddDialog, setIsOpenCatAddDialog] = useState(false);
   const [isOpenCatUpdateDialog, setIsOpenCatUpdateDialog] = useState(false);
@@ -178,6 +179,7 @@ const ProductsController = () => {
       formikAddItem.resetForm();
       setImages([]);
       setSizeChart(null);
+      setVideoClip(null);
     }
     setIsOpenAddItemDialog(!isOpenAddItemDialog);
   };
@@ -273,6 +275,11 @@ const ProductsController = () => {
       if (sizeChart) {
         data.append("chart", sizeChart.file);
       }
+
+      if (videoClip) {
+        data.append("video", videoClip.file);
+      }
+
       const body = JSON.stringify(formikAddItem.values);
       data.append("data", body);
 
@@ -372,6 +379,8 @@ const ProductsController = () => {
       setImages={setImages}
       sizeChart={sizeChart}
       setSizeChart={setSizeChart}
+      videoClip={videoClip}
+      setVideoClip={setVideoClip}
       formikCreate={formikCreate}
       formikUpdate={formikUpdate}
       formikAddItem={formikAddItem}

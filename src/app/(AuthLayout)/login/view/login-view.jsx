@@ -45,16 +45,6 @@ export const LoginView = ({ formik, isLoading, handleLogin }) => {
                 <Logo />
               </Box>
               <AuthLogin
-                subtext={
-                  <Typography
-                    variant="subtitle1"
-                    textAlign="center"
-                    color="textSecondary"
-                    mb={1}
-                  >
-                    VITALIAN Admin Login
-                  </Typography>
-                }
                 handleLogin={handleLogin}
                 isLoading={isLoading}
                 formik={formik}

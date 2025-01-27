@@ -33,6 +33,8 @@ export const ItemView = ({
   setImages,
   sizeChart,
   setSizeChart,
+  videoClip,
+  setVideoClip,
   selectedVariant,
   handleSelectVariant,
   selectedImage,
@@ -87,6 +89,23 @@ export const ItemView = ({
             <Grid container spacing={1}>
               <Grid size={{ xs: 12, sm: 12 }}>
                 <ImageList cols={6}>
+                  {data.itemVideoClip?.videoUrl && (
+                    <ImageListItem
+                      sx={{ alignItems: "center", justifyContent: "center" }}
+                      onClick={() =>
+                        handleImageClick({
+                          imgUrl: data.itemVideoClip?.videoUrl,
+                        })
+                      }
+                    >
+                      <video
+                        src={data.itemVideoClip.videoUrl}
+                        controls
+                        autoPlay={true}
+                        style={{ width: "100%" }}
+                      />
+                    </ImageListItem>
+                  )}
                   {filteredImages.map((image, index) => (
                     <ImageListItem
                       key={index}
@@ -119,8 +138,9 @@ export const ItemView = ({
                   }}
                 >
                   <CardMedia
-                    component="img"
-                    image={selectedImage.imgUrl}
+                    component={selectedImage.type === "image" ? "img" : "video"}
+                    src={selectedImage.imgUrl}
+                    autoPlay={true}
                     alt="Selected Product Image"
                     sx={{
                       width: "100%",
@@ -323,6 +343,8 @@ export const ItemView = ({
           setImages={setImages}
           sizeChart={sizeChart}
           setSizeChart={setSizeChart}
+          videoClip={videoClip}
+          setVideoClip={setVideoClip}
           handleSubmit={handleUpdateItem}
           isLoading={isLoadingUpdate}
         />
