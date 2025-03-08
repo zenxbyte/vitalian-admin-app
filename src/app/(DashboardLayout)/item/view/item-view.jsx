@@ -92,15 +92,10 @@ export const ItemView = ({
                   {data.itemVideoClip?.videoUrl && (
                     <ImageListItem
                       sx={{ alignItems: "center", justifyContent: "center" }}
-                      onClick={() =>
-                        handleImageClick({
-                          imgUrl: data.itemVideoClip?.videoUrl,
-                        })
-                      }
+                      onClick={() => handleImageClick(data.itemVideoClip)}
                     >
                       <video
                         src={data.itemVideoClip.videoUrl}
-                        controls
                         autoPlay={true}
                         style={{ width: "100%" }}
                       />
@@ -133,18 +128,20 @@ export const ItemView = ({
                     flex: 1,
                     overflow: "hidden",
                     position: "relative",
-                    //height: 400,
                     width: "100%",
+                    mt: matchDownSM ? 0 : "30px",
                   }}
                 >
                   <CardMedia
-                    component={selectedImage.type === "image" ? "img" : "video"}
-                    src={selectedImage.imgUrl}
+                    component={selectedImage.type === "video" ? "video" : "img"}
                     autoPlay={true}
+                    src={
+                      selectedImage.type === "video"
+                        ? selectedImage.videoUrl
+                        : selectedImage.imgUrl
+                    }
                     alt="Selected Product Image"
                     sx={{
-                      width: "100%",
-                      //height: 400,
                       objectFit: "contain",
                     }}
                   />
