@@ -33,8 +33,8 @@ const OrderController = () => {
   const formik = useFormik({
     initialValues: {
       vehicleType: "Bike",
-      phone: "0760789387",
-      pickup_address: "No 01, Some Road, Some City",
+      phone: "0753304215",
+      pickup_address: "No 78, Keels Housing Scheme, Pinwatta, Panadura.",
       pickup_remark: "None",
       latitude: 6.782852,
       longitude: 79.884139,
