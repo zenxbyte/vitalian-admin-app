@@ -20,12 +20,14 @@ import Grid from "@mui/material/Grid2";
 import CloseIcon from "@mui/icons-material/Close";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { AddCircleRounded } from "@mui/icons-material";
+import ClearIcon from "@mui/icons-material/Clear";
 
 import { CurrencyInput } from "@/components/currency-input/currency-input";
 import DropFileContainer from "@/components/DropFileContainer/dropFileContainer";
 import { SelectSizeDialog } from "./selectSizeDialog";
 import { AddColorDialog } from "./addColorDialog";
 import { ConfirmationDialog } from "@/components/confirmation-dialog/confirmation-dialog";
+import { VideoUploadDialog } from "@/components/video-upload-dialog/videoUploadDialog";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -38,6 +40,8 @@ export const ItemAddDialog = ({
   setImages,
   sizeChart,
   setSizeChart,
+  videoClip,
+  setVideoClip,
   formik,
   isLoading,
   handleSubmit,
@@ -51,6 +55,7 @@ export const ItemAddDialog = ({
   const [isOpenColorDlg, setIsOpenColorDlg] = useState(false);
   const [isOpenImgDlg, setIsOpenImgDlg] = useState(false);
   const [isOpenChartImgDlg, setIsOpenChartImgDlg] = useState(false);
+  const [isOpenVideoDlg, setIsOpenVideoDlg] = useState(false);
   const [isOpenSizeDlg, setIsOpenSizeDlg] = useState(false);
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
 
@@ -89,6 +94,10 @@ export const ItemAddDialog = ({
   const handleOpenCloseSizeDialog = (index) => {
     setSelectedVariant(isOpenSizeDlg ? null : index);
     setIsOpenSizeDlg(!isOpenSizeDlg);
+  };
+
+  const handleOpenCloseVideoDialog = () => {
+    setIsOpenVideoDlg(!isOpenVideoDlg);
   };
 
   const handleChangeColor = (e) => {
@@ -259,10 +268,10 @@ export const ItemAddDialog = ({
                 helperText={touched.itemDiscount && errors.itemDiscount}
               />
             </Grid>
-            <Grid size={{ xs: 9, md: 11 }}>
+            <Grid size={{ xs: 9, md: 10 }}>
               <Typography variant="h6">Size Chart</Typography>
             </Grid>
-            <Grid size={{ xs: 3, md: 1 }}>
+            <Grid size={{ xs: 3, md: 2 }}>
               <Button
                 fullWidth
                 startIcon={<AddCircleRounded />}
@@ -303,7 +312,41 @@ export const ItemAddDialog = ({
                 </ImageList>
               </Grid>
             )}
-
+            <Grid size={{ xs: 9, md: 10 }}>
+              <Typography variant="h6">Video Clip</Typography>
+            </Grid>
+            <Grid size={{ xs: 3, md: 2 }}>
+              {!videoClip ? (
+                <Button
+                  fullWidth
+                  startIcon={<AddCircleRounded />}
+                  variant="contained"
+                  onClick={handleOpenCloseVideoDialog}
+                >
+                  Add
+                </Button>
+              ) : (
+                <Button
+                  fullWidth
+                  startIcon={<ClearIcon />}
+                  variant="contained"
+                  onClick={() => setVideoClip(null)}
+                >
+                  Clear
+                </Button>
+              )}
+            </Grid>
+            {videoClip && (
+              <Grid size={{ xs: 12, sm: 12 }}>
+                <Box sx={{ width: "300px" }}>
+                  <video
+                    src={videoClip?.url}
+                    controls
+                    style={{ width: "100%", marginTop: "10px" }}
+                  />
+                </Box>
+              </Grid>
+            )}
             <Grid size={{ xs: 12, md: 12 }}>
               <Typography variant="h6">Other Informations</Typography>
             </Grid>
@@ -585,6 +628,14 @@ export const ItemAddDialog = ({
           open={isOpenDeleteDialog}
           handleOpenClose={handleOpenCloseDeleteDialog}
           handleConfirm={handleDeleteVariant}
+        />
+      )}
+      {isOpenVideoDlg && (
+        <VideoUploadDialog
+          isOpen={isOpenVideoDlg}
+          videoClip={videoClip}
+          setVideoClip={setVideoClip}
+          handleClose={handleOpenCloseVideoDialog}
         />
       )}
     </Fragment>
