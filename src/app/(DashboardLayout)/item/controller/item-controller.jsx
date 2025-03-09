@@ -190,7 +190,14 @@ const ItemController = () => {
               images.some(
                 (updatedImage) => updatedImage.fileUrl === image.imgUrl
               )
-            );
+            )
+            .map((image) => ({
+              imgUrl: image.imgUrl,
+              imgKey: image.imgKey,
+              type: commonUtil.isUndefinedOrNull(image.type)
+                ? "image"
+                : "video",
+            }));
 
           return {
             ...variant,
