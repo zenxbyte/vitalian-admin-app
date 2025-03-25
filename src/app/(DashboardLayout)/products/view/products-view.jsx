@@ -93,6 +93,15 @@ export const ProductsView = ({
                 </Grid>
               ) : (
                 <>
+                  <Grid size={{ xs: 6, sm: 2 }}>
+                    <Button
+                      variant={!selectedCat ? "contained" : "outlined"}
+                      onClick={() => handleSelectCat(null)}
+                      fullWidth
+                    >
+                      All
+                    </Button>
+                  </Grid>
                   {categories.map((item, index) => (
                     <Grid key={index} size={{ xs: 6, sm: 2 }}>
                       <Button
@@ -113,19 +122,21 @@ export const ProductsView = ({
             </Grid>
           </Box>
         </Grid>
-        {selectedCat && (
-          <Grid size={{ sm: 12, xs: 12 }}>
-            <Grid container spacing={2}>
-              <Grid size={{ xs: 12, sm: 12 }}>
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  justifyContent="space-between"
-                  alignItems="center"
-                >
-                  <Typography variant="h6" textAlign="center">
-                    {`${selectedCat.catName} ( ${documentCount} items )`}
-                  </Typography>
+        <Grid size={{ sm: 12, xs: 12 }}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="h6" textAlign="center">
+                  {`${
+                    selectedCat ? selectedCat.catName : "All Items"
+                  } ( ${documentCount} items )`}
+                </Typography>
+                {selectedCat && (
                   <Box
                     display="flex"
                     flexDirection="row"
@@ -145,62 +156,62 @@ export const ProductsView = ({
                       Add Item
                     </Button>
                   </Box>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 12 }}>
-                <Card>
-                  <TableContainer>
-                    <Table>
-                      <CustomTableHead headLabel={itemHeaders} />
-                      <TableBody>
-                        {isLoadingItems ? (
-                          <TableLoadingRow colSpan={itemHeaders.length} />
-                        ) : (
-                          <>
-                            {items.length > 0 ? (
-                              <>
-                                {items.map((item, index) => (
-                                  <TableRow
-                                    key={index}
-                                    onClick={() => handleClickItemRow(item._id)}
-                                  >
-                                    <TableCell>{item.itemTitle}</TableCell>
-                                    <TableCell>
-                                      {item.itemDescription
-                                        ? item.itemDescription
-                                        : " - "}
-                                    </TableCell>
-                                    <TableCell>
-                                      {formatCurrency(item.itemPrice)}
-                                    </TableCell>
-                                    <TableCell>{item.itemDiscount} %</TableCell>
-                                  </TableRow>
-                                ))}
-                              </>
-                            ) : (
-                              <TableEmptyRow colSpan={itemHeaders.length} />
-                            )}
-                          </>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                  {items.length > 5 && (
-                    <TablePagination
-                      page={page}
-                      component="div"
-                      count={documentCount}
-                      rowsPerPage={rowsPerPage}
-                      onPageChange={handleChangePage}
-                      rowsPerPageOptions={[10, 20, 30]}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  )}
-                </Card>
-              </Grid>
+                )}
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 12 }}>
+              <Card>
+                <TableContainer>
+                  <Table>
+                    <CustomTableHead headLabel={itemHeaders} />
+                    <TableBody>
+                      {isLoadingItems ? (
+                        <TableLoadingRow colSpan={itemHeaders.length} />
+                      ) : (
+                        <>
+                          {items.length > 0 ? (
+                            <>
+                              {items.map((item, index) => (
+                                <TableRow
+                                  key={index}
+                                  onClick={() => handleClickItemRow(item._id)}
+                                >
+                                  <TableCell sx={{cursor: 'pointer'}}>{item.itemTitle}</TableCell>
+                                  <TableCell sx={{cursor: 'pointer'}}>
+                                    {item.itemDescription
+                                      ? item.itemDescription
+                                      : " - "}
+                                  </TableCell>
+                                  <TableCell sx={{cursor: 'pointer'}}>
+                                    {formatCurrency(item.itemPrice)}
+                                  </TableCell>
+                                  <TableCell sx={{cursor: 'pointer'}}>{item.itemDiscount} %</TableCell>
+                                </TableRow>
+                              ))}
+                            </>
+                          ) : (
+                            <TableEmptyRow colSpan={itemHeaders.length} />
+                          )}
+                        </>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                {items.length > 5 && (
+                  <TablePagination
+                    page={page}
+                    component="div"
+                    count={documentCount}
+                    rowsPerPage={rowsPerPage}
+                    onPageChange={handleChangePage}
+                    rowsPerPageOptions={[10, 20, 30]}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                )}
+              </Card>
             </Grid>
           </Grid>
-        )}
+        </Grid>
       </Grid>
       {isOpenCatAddDialog && (
         <CategoryAddDialog

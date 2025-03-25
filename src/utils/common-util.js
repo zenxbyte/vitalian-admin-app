@@ -1,3 +1,4 @@
+import { PAY_CREDIT_CARD, PAY_ON_DELIVER } from "@/constants/payment-methods";
 import { fTimestamp } from "./format-time";
 
 /**
@@ -71,6 +72,17 @@ const blobToFile = (blob, fileName, originalFileType = "image/jpeg") => {
   return new File([blob], fileName, { type: originalFileType });
 };
 
+const getPaymentMethodString = (method) => {
+  switch (method) {
+    case PAY_CREDIT_CARD:
+      return "Visa/Master";
+    case PAY_ON_DELIVER:
+      return "COD";
+    default:
+      return "-";
+  }
+};
+
 /* eslint import/no-anonymous-default-export: [2, {"allowObject": true}] */
 export default {
   isUndefinedOrNull,
@@ -80,4 +92,5 @@ export default {
   validateFormik,
   createImgFileName,
   blobToFile,
+  getPaymentMethodString
 };

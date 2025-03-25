@@ -308,31 +308,30 @@ const ProductsController = () => {
   };
 
   const fetchItems = async () => {
-    if (selectedCat) {
-      setIsLoadingItems(true);
+    setIsLoadingItems(true);
 
-      await backendAuthApi({
-        url: BACKEND_API.ITEM_GET_BY_CAT + selectedCat._id,
-        method: "GET",
-        cancelToken: cancelToken.token,
-        params: {
-          page: page,
-          limit: rowsPerPage,
-        },
+    await backendAuthApi({
+      url: BACKEND_API.ITEM_GET_BY_CAT,
+      method: "GET",
+      cancelToken: cancelToken.token,
+      params: {
+        page: page,
+        limit: rowsPerPage,
+        id: selectedCat ? selectedCat._id : null,
+      },
+    })
+      .then((res) => {
+        if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+          setItems(res.data.responseData.result);
+          setDocumentCount(res.data.responseData.count);
+        }
       })
-        .then((res) => {
-          if (responseUtil.isResponseSuccess(res.data.responseCode)) {
-            setItems(res.data.responseData.result);
-            setDocumentCount(res.data.responseData.count);
-          }
-        })
-        .catch(() => {
-          setIsLoadingItems(false);
-        })
-        .finally(() => {
-          setIsLoadingItems(false);
-        });
-    }
+      .catch(() => {
+        setIsLoadingItems(false);
+      })
+      .finally(() => {
+        setIsLoadingItems(false);
+      });
   };
 
   const fetchCategories = async () => {
@@ -357,9 +356,7 @@ const ProductsController = () => {
   };
 
   useEffect(() => {
-    if (selectedCat) {
-      fetchItems();
-    }
+    fetchItems();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCat, rowsPerPage, page]);
