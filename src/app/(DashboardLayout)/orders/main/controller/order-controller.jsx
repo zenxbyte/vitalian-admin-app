@@ -52,6 +52,8 @@ const OrderController = () => {
   const [selectedFilters, setSelectedFilters] = useState({
     paymentStatus: "",
     orderStatus: "",
+    mobile: "",
+    name: "",
     orderId: "",
     sort: SORT_BY[0].value,
   });
@@ -72,6 +74,7 @@ const OrderController = () => {
   const [isLoadingUpdateStatus, setIsLoadingUpdateStatus] = useState(false);
   const [isLoadingAddDelivery, setIsLoadingAddDelivery] = useState(false);
   const [isLoadingPickupRqst, setIsLoadingPickupRqst] = useState(false);
+  const [isLoadingDownload, setIsLoadingDownload] = useState(false);
 
   const handleSelectOptions = (e) => {
     setSelectedFilters((prevFilters) => ({
@@ -86,7 +89,7 @@ const OrderController = () => {
   const handleChangeSearch = (e) => {
     setSelectedFilters((prevFilters) => ({
       ...prevFilters,
-      orderId: e.target.value,
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -238,6 +241,43 @@ const OrderController = () => {
     }
   };
 
+  const handleDownloadOrders = async () => {
+    setIsLoadingDownload(true);
+
+    await backendAuthApi({
+      url: BACKEND_API.ORDER_DOWNLOAD_CSV,
+      method: "GET",
+      cancelToken: sourceToken.token,
+      params: {
+        orderStatus: selectedFilters.orderStatus,
+      },
+      responseType: "blob",
+    })
+      .then((res) => {
+        // Create a link element and trigger download
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          `Orders-${
+            commonUtil.isUndefinedOrNull(selectedFilters.orderStatus)
+              ? "All"
+              : selectedFilters.orderStatus
+          }.xlsx`
+        );
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(() => {
+        setIsLoadingDownload(false);
+      })
+      .finally(() => {
+        setIsLoadingDownload(false);
+      });
+  };
+
   const handleFetchOrders = async () => {
     setIsLoading(true);
 
@@ -289,12 +329,14 @@ const OrderController = () => {
       isLoadingUpdateStatus={isLoadingUpdateStatus}
       isLoadingAddDelivery={isLoadingAddDelivery}
       isLoadingPickupRqst={isLoadingPickupRqst}
+      isLoadingDownload={isLoadingDownload}
       handleOpenCloseUpdateDialog={handleOpenCloseUpdateDialog}
       handleOpenCloseAddDeliveryDialog={handleOpenCloseAddDeliveryDialog}
       handleOpenClosePickUpReqestDialog={handleOpenClosePickUpReqestDialog}
       handleUpdateOrderState={handleUpdateOrderState}
       handleAddDeliveryOrders={handleAddDeliveryOrders}
       handlePickUpRequests={handlePickUpRequests}
+      handleDownloadOrders={handleDownloadOrders}
       limit={limit}
       page={page}
       documentCount={documentCount}

@@ -16,7 +16,7 @@ export const BACKEND_API = {
   PRODUCT_CAT_UPDATE: IP_URL + "category/auth/",
 
   ITEM_DETAILS: IP_URL + "item/noAuth/details/",
-  ITEM_GET_BY_CAT: IP_URL + "item/noAuth/by-category/",
+  ITEM_GET_BY_CAT: IP_URL + "item/noAuth/by-category",
   ITEM_ADD: IP_URL + "item/auth/create/",
   ITEM_UPDATE: IP_URL + "item/auth/update/",
 
@@ -32,4 +32,5 @@ export const BACKEND_API = {
   ORDER_PICK_UP_REQUEST: IP_URL + "order/auth/request-pickup",
   ORDER_CANCEL: IP_URL + "order/auth/cancel-order/",
   ORDER_UPDATE_PAYMENT_STATUS: IP_URL + "order/auth/update-payment-status",
+  ORDER_DOWNLOAD_CSV: IP_URL + 'order/auth/orders-csv'
 };
