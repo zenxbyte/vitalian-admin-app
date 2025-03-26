@@ -345,7 +345,7 @@ export const OrderView = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-              {data.length > 10 && (
+              {data.length > 10 || page != 0 && (
                 <TablePagination
                   page={page}
                   component="div"
