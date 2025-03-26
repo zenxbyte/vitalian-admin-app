@@ -28,6 +28,7 @@ export const LoginView = ({ formik, isLoading, handleLogin }) => {
         <Grid
           container
           spacing={0}
+          alignItems="center"
           justifyContent="center"
           sx={{ height: "100vh" }}
         >
@@ -39,10 +40,20 @@ export const LoginView = ({ formik, isLoading, handleLogin }) => {
           >
             <Card
               elevation={9}
-              sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
+              sx={{
+                p: 4,
+                zIndex: 1,
+                width: "100%",
+                maxWidth: "500px",
+                height: "auto",
+              }}
             >
               <Box display="flex" alignItems="center" justifyContent="center">
-                <Logo />
+                <img
+                  src="/images/logos/VITALIAN-LOGO-DARK.png"
+                  alt="logo"
+                  style={{ width: "120px", height: "auto" }}
+                />
               </Box>
               <AuthLogin
                 handleLogin={handleLogin}
