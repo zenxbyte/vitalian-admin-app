@@ -36,8 +36,8 @@ const OrderController = () => {
       phone: "0753304215",
       pickup_address: "No 78, Keels Housing Scheme, Pinwatta, Panadura.",
       pickup_remark: "None",
-      latitude: 6.782852,
-      longitude: 79.884139,
+      latitude: 6.69094,
+      longitude: 79.91721,
     },
     validationSchema,
     onSubmit: () => {
@@ -166,6 +166,7 @@ const OrderController = () => {
         if (responseUtil.isResponseSuccess(res.data.responseCode)) {
           handleFetchOrders();
           handleOpenCloseUpdateDialog();
+          setSelectedRows([])
         } else {
           enqueueSnackbar(res.data.responseMessage, {
             variant: responseUtil.findResponseType(res.data.responseCode),
