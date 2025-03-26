@@ -212,6 +212,8 @@ export const ItemAddDialog = ({
                 name="itemDescription"
                 label="Item Description"
                 fullWidth
+                multiline
+                rows={4}
                 {...getFieldProps("itemDescription")}
                 error={Boolean(
                   touched.itemDescription && errors.itemDescription
@@ -395,6 +397,8 @@ export const ItemAddDialog = ({
                 name="itemInformation.washAndCare"
                 label="Wash & Care"
                 fullWidth
+                multiline
+                rows={6}
                 {...getFieldProps("itemInformation.washAndCare")}
               />
             </Grid>
