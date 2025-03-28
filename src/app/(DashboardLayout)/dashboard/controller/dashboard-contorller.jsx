@@ -103,26 +103,26 @@ const DashboardController = () => {
   };
 
   const fetchCountWaiting = async () => {
-    setIsLoadingCountWaiting(true);
+    // setIsLoadingCountWaiting(true);
 
-    await backendAuthApi({
-      url: BACKEND_API.ORDER_STAT_COUNT,
-      method: "GET",
-      params: {
-        orderStatus: ORDER_STATUS_WAITING,
-      },
-    })
-      .then((res) => {
-        if (responseUtil.isResponseSuccess(res.data.responseCode)) {
-          setCountWaiting(res.data.responseData);
-        }
-      })
-      .catch(() => {
-        setIsLoadingCountWaiting(false);
-      })
-      .finally(() => {
-        setIsLoadingCountWaiting(false);
-      });
+    // await backendAuthApi({
+    //   url: BACKEND_API.ORDER_STAT_COUNT,
+    //   method: "GET",
+    //   params: {
+    //     orderStatus: ORDER_STATUS_WAITING,
+    //   },
+    // })
+    //   .then((res) => {
+    //     if (responseUtil.isResponseSuccess(res.data.responseCode)) {
+    //       setCountWaiting(res.data.responseData);
+    //     }
+    //   })
+    //   .catch(() => {
+    //     setIsLoadingCountWaiting(false);
+    //   })
+    //   .finally(() => {
+    //     setIsLoadingCountWaiting(false);
+    //   });
   };
 
   const fetchRecentPickUpRequests = async () => {
@@ -184,7 +184,7 @@ const DashboardController = () => {
     fetchCountPending();
     fetchCountPacked();
     fetchCountReady();
-    fetchCountWaiting();
+    //fetchCountWaiting();
     fetchRecentTransactions();
     fetchRecentPickUpRequests();
     fetchRecentOrders();

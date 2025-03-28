@@ -7,11 +7,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import {
   ORDER_STATUS_DELIVERED,
+  ORDER_STATUS_DELIVERY_CREATED,
   ORDER_STATUS_OUT_DELIVERY,
   ORDER_STATUS_PACKED,
   ORDER_STATUS_PENDING,
-  ORDER_STATUS_PROCESSING,
-  ORDER_STATUS_WAITING,
 } from "@/constants/order-status";
 
 export const UpdateStatusDialog = ({
@@ -24,10 +23,8 @@ export const UpdateStatusDialog = ({
   const filterChangeTo = () => {
     switch (filter) {
       case ORDER_STATUS_PENDING:
-        return ORDER_STATUS_PROCESSING;
-      case ORDER_STATUS_PROCESSING:
         return ORDER_STATUS_PACKED;
-      case ORDER_STATUS_WAITING:
+      case ORDER_STATUS_DELIVERY_CREATED:
         return ORDER_STATUS_OUT_DELIVERY;
       case ORDER_STATUS_OUT_DELIVERY:
         return ORDER_STATUS_DELIVERED;

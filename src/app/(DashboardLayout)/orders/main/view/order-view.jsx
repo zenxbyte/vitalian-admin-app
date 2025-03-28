@@ -27,7 +27,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import DownloadIcon from '@mui/icons-material/Download';
+import DownloadIcon from "@mui/icons-material/Download";
+import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
 import { CustomTableHead } from "@/components/custom-table/custom-table-head";
 import {
   ORDER_STATUS,
@@ -35,8 +36,6 @@ import {
   ORDER_STATUS_OUT_DELIVERY,
   ORDER_STATUS_PACKED,
   ORDER_STATUS_PENDING,
-  ORDER_STATUS_PROCESSING,
-  ORDER_STATUS_WAITING,
 } from "@/constants/order-status";
 import { PAYMENT_STATUS } from "@/constants/payment-status";
 import { SORT_BY } from "@/constants/sort-constants";
@@ -81,6 +80,7 @@ export const OrderView = ({
   isLoadingAddDelivery,
   isLoadingPickupRqst,
   isLoadingDownload,
+  isLoadingDownloadInfoSheet,
   handleOpenCloseUpdateDialog,
   handleOpenCloseAddDeliveryDialog,
   handleOpenClosePickUpReqestDialog,
@@ -88,6 +88,7 @@ export const OrderView = ({
   handleAddDeliveryOrders,
   handlePickUpRequests,
   handleDownloadOrders,
+  handleDownloadDeliveryInfoSheet,
   limit,
   page,
   documentCount,
@@ -234,12 +235,9 @@ export const OrderView = ({
                     <Typography variant="h6">ORDERS</Typography>
                   )}
                   {!matchDownSM && <Box flexGrow={1} />}
-                  {[
-                    ORDER_STATUS_PENDING,
-                    ORDER_STATUS_PROCESSING,
-                    ORDER_STATUS_WAITING,
-                    ORDER_STATUS_OUT_DELIVERY,
-                  ].includes(selectedFilters.orderStatus) && (
+                  {[ORDER_STATUS_PENDING, ORDER_STATUS_OUT_DELIVERY].includes(
+                    selectedFilters.orderStatus
+                  ) && (
                     <Button
                       variant="outlined"
                       disabled={selectedRows.length === 0}
@@ -266,14 +264,25 @@ export const OrderView = ({
                       Create Pickup Request
                     </Button>
                   )}
-                  <IconButton onClick={handleDownloadOrders} disabled={isLoadingDownload}>
+                  <IconButton
+                    onClick={handleDownloadOrders}
+                    disabled={isLoadingDownload}
+                  >
                     <DownloadIcon />
                   </IconButton>
                 </Box>
               </Container>
               <TableContainer>
                 <Table>
-                  <CustomTableHead headLabel={headers} />
+                  <CustomTableHead
+                    headLabel={headers}
+                    enableAction={
+                      selectedFilters.orderStatus ===
+                      ORDER_STATUS_DELIVERY_CREATED
+                        ? true
+                        : false
+                    }
+                  />
                   <TableBody>
                     {isLoading && <TableLoadingRow colSpan={headers.length} />}
                     {!isLoading && data.length === 0 && (
@@ -290,9 +299,7 @@ export const OrderView = ({
                             >
                               <TableCell>
                                 {[
-                                  ORDER_STATUS_PROCESSING,
                                   ORDER_STATUS_PENDING,
-                                  ORDER_STATUS_WAITING,
                                   ORDER_STATUS_OUT_DELIVERY,
                                 ].includes(selectedFilters.orderStatus) && (
                                   <Checkbox
@@ -337,6 +344,19 @@ export const OrderView = ({
                               <TableCell sx={{ cursor: "pointer" }}>
                                 {fDate(item.createdAt)}
                               </TableCell>
+                              {selectedFilters.orderStatus ===
+                                ORDER_STATUS_DELIVERY_CREATED && (
+                                <TableCell sx={{ cursor: "pointer" }}>
+                                  <IconButton
+                                    onClick={(e) => {
+                                      handleDownloadDeliveryInfoSheet(e, item);
+                                    }}
+                                    disabled={isLoadingDownloadInfoSheet}
+                                  >
+                                    <DownloadForOfflineIcon />
+                                  </IconButton>
+                                </TableCell>
+                              )}
                             </TableRow>
                           );
                         })}
@@ -345,17 +365,18 @@ export const OrderView = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-              {data.length > 10 || page != 0 && (
-                <TablePagination
-                  page={page}
-                  component="div"
-                  count={documentCount}
-                  rowsPerPage={limit}
-                  onPageChange={handleChangePage}
-                  rowsPerPageOptions={[20, 30, 40]}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-              )}
+              {data.length > 10 ||
+                (page != 0 && (
+                  <TablePagination
+                    page={page}
+                    component="div"
+                    count={documentCount}
+                    rowsPerPage={limit}
+                    onPageChange={handleChangePage}
+                    rowsPerPageOptions={[20, 30, 40]}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                ))}
             </Paper>
           </Card>
         </Grid>
