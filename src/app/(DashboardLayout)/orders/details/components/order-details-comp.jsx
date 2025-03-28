@@ -21,9 +21,9 @@ export const OrderDetailsComp = ({ data }) => {
             <TableCell>{data.orderId}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Tracking Number</TableCell>
+            <TableCell>WayBill Id</TableCell>
             <TableCell>
-              {data.orderDeliveryId ? data.orderDeliveryId : " - "}
+              {data.orderWayBillId ? data.orderWayBillId : " - "}
             </TableCell>
           </TableRow>
           <TableRow>
@@ -37,6 +37,10 @@ export const OrderDetailsComp = ({ data }) => {
           <TableRow>
             <TableCell>Customer Mobile</TableCell>
             <TableCell>{data.customer.phone}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Customer Mobile (Extra)</TableCell>
+            <TableCell>{data.customer.secondaryPhone ? data.customer.secondaryPhone : ' - '}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Address</TableCell>

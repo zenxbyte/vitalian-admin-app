@@ -32,5 +32,6 @@ export const BACKEND_API = {
   ORDER_PICK_UP_REQUEST: IP_URL + "order/auth/request-pickup",
   ORDER_CANCEL: IP_URL + "order/auth/cancel-order/",
   ORDER_UPDATE_PAYMENT_STATUS: IP_URL + "order/auth/update-payment-status",
-  ORDER_DOWNLOAD_CSV: IP_URL + 'order/auth/orders-csv'
+  ORDER_DOWNLOAD_CSV: IP_URL + 'order/auth/orders-csv',
+  ORDER_DOWNLOAD_DELIVERY_INFO: IP_URL + 'order/auth/download-delivery-info'
 };
