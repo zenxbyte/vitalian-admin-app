@@ -75,6 +75,8 @@ const OrderController = () => {
   const [isLoadingAddDelivery, setIsLoadingAddDelivery] = useState(false);
   const [isLoadingPickupRqst, setIsLoadingPickupRqst] = useState(false);
   const [isLoadingDownload, setIsLoadingDownload] = useState(false);
+  const [isLoadingDownloadInfoSheet, setIsLoadingDownloadInfoSheet] =
+    useState(false);
 
   const handleSelectOptions = (e) => {
     setSelectedFilters((prevFilters) => ({
@@ -122,6 +124,7 @@ const OrderController = () => {
         ...prev,
         orderStatus: "",
       }));
+      setSelectedRows([]);
     }
     setIsOpenUpdateStatus(!isOpenUpdateStatus);
   };
@@ -166,7 +169,7 @@ const OrderController = () => {
         if (responseUtil.isResponseSuccess(res.data.responseCode)) {
           handleFetchOrders();
           handleOpenCloseUpdateDialog();
-          setSelectedRows([])
+          setSelectedRows([]);
         } else {
           enqueueSnackbar(res.data.responseMessage, {
             variant: responseUtil.findResponseType(res.data.responseCode),
@@ -279,6 +282,38 @@ const OrderController = () => {
       });
   };
 
+  const handleDownloadDeliveryInfoSheet = async (e, row) => {
+    e.stopPropagation();
+    
+    setIsLoadingDownloadInfoSheet(true);
+
+    await backendAuthApi({
+      url: BACKEND_API.ORDER_DOWNLOAD_DELIVERY_INFO,
+      method: "GET",
+      cancelToken: sourceToken.token,
+      params: {
+        id: row._id,
+      },
+      responseType: "blob",
+    })
+      .then((res) => {
+        // Create a link element and trigger download
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${row.orderId}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch(() => {
+        setIsLoadingDownloadInfoSheet(false);
+      })
+      .finally(() => {
+        setIsLoadingDownloadInfoSheet(false);
+      });
+  };
+
   const handleFetchOrders = async () => {
     setIsLoading(true);
 
@@ -331,6 +366,7 @@ const OrderController = () => {
       isLoadingAddDelivery={isLoadingAddDelivery}
       isLoadingPickupRqst={isLoadingPickupRqst}
       isLoadingDownload={isLoadingDownload}
+      isLoadingDownloadInfoSheet={isLoadingDownloadInfoSheet}
       handleOpenCloseUpdateDialog={handleOpenCloseUpdateDialog}
       handleOpenCloseAddDeliveryDialog={handleOpenCloseAddDeliveryDialog}
       handleOpenClosePickUpReqestDialog={handleOpenClosePickUpReqestDialog}
@@ -338,6 +374,7 @@ const OrderController = () => {
       handleAddDeliveryOrders={handleAddDeliveryOrders}
       handlePickUpRequests={handlePickUpRequests}
       handleDownloadOrders={handleDownloadOrders}
+      handleDownloadDeliveryInfoSheet={handleDownloadDeliveryInfoSheet}
       limit={limit}
       page={page}
       documentCount={documentCount}

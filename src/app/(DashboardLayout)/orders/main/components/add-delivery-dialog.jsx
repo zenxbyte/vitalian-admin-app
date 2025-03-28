@@ -24,8 +24,7 @@ export const AddDeliveryDialog = ({
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           Are you sure you want to create delivery requests for all the
-          available packed orders? Please note that one request per day can be
-          made.
+          available packed orders?
         </DialogContentText>
       </DialogContent>
       <DialogActions>

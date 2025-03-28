@@ -61,14 +61,14 @@ export const DashboardView = ({
                   isLoading={isLoadingCountReady}
                 />
               </Grid>
-              <Grid size={{ sm: 6, xs: 12 }}>
+              {/* <Grid size={{ sm: 6, xs: 12 }}>
                 <StatCard
                   title={"Awaiting Pick Up"}
                   icon={<LocalShippingIcon fontSize="large" color="warning" />}
                   data={countWaiting}
                   isLoading={isLoadingCountWaiting}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
           <Grid size={{ sm: 4, xs: 12 }}>
