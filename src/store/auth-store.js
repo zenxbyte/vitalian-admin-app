@@ -1,5 +1,7 @@
+import Cookies from "js-cookie";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { COOKIES } from "@/constants/cookie_constants";
 
 // Define auth and snackbar state with Zustand and add persistence
 const useAuthStore = create(
@@ -29,7 +31,8 @@ const useAuthStore = create(
             },
           },
         })),
-      logoutUser: () =>
+      logoutUser: () => {
+        Cookies.remove(COOKIES.IS_LOGGEDIN)
         set(() => ({
           auth: {
             isLoggedIn: false,
@@ -41,7 +44,9 @@ const useAuthStore = create(
               userRole: "",
             },
           },
-        })),
+        }))
+      }
+      
     }),
     {
       name: "auth-storage", // storage name for localStorage
