@@ -21,7 +21,6 @@ const PageWrapper = styled("div")(() => ({
 
 export default function RootLayout({ children }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const toggleDrawer = () => {
     setSidebarOpen(!isSidebarOpen);
