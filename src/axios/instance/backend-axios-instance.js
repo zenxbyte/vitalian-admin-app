@@ -6,7 +6,6 @@ import commonUtil from "@/utils/common-util";
 import responseUtil from "@/utils/responseUtil";
 import useSnackbarStore from "@/store/notification-store";
 import useAuthStore from "@/store/auth-store";
-import { useRouter } from "next/navigation";
 
 export const backendAuthApi = axios.create({
   // one minute timeout
@@ -28,7 +27,6 @@ backendAuthApi.interceptors.response.use(
     return response;
   },
   (error) => {
-    const router = useRouter();
     const { logoutUser } = useAuthStore.getState();
     const { enqueueSnackbar } = useSnackbarStore.getState();
 
@@ -43,24 +41,17 @@ backendAuthApi.interceptors.response.use(
           errorCode = errorResponse.responseCode;
         }
 
-        // Logout user if the response code matches specific auth errors
-        if (
-          ["AUTH-002", "AUTH-003", "AUTH-004"].includes(
-            errorResponse.responseCode
-          )
-        ) {
-          logoutUser();
-          router.push("/login");
-          enqueueSnackbar({
-            message: errorMessage,
-            options: {
-              key: uuid(),
-              variant: errorCode
-                ? responseUtil.findResponseType(errorCode)
-                : SNACKBAR_MESSAGE.SOMETHING_WENT_WRONG.VARIANT,
-            },
-          });
-          return;
+        if (typeof window !== "undefined") {
+          // Logout user if the response code matches specific auth errors
+          if (
+            ["AUTH-002", "AUTH-003", "AUTH-004"].includes(
+              errorResponse.responseCode
+            )
+          ) {
+            logoutUser();
+
+            window.location.href = "/login";
+          }
         }
       }
       enqueueSnackbar({

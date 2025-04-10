@@ -70,8 +70,6 @@ const LoginController = () => {
         .then(() => {
           setIsLoading(false);
         });
-    } else {
-      console.log("not valid");
     }
   };
   return (
