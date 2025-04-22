@@ -97,6 +97,7 @@ export const ItemView = ({
                       <video
                         src={data.itemVideoClip.videoUrl}
                         autoPlay={true}
+                        muted
                         style={{ width: "100%" }}
                       />
                     </ImageListItem>
@@ -315,7 +316,7 @@ export const ItemView = ({
               )}
               {data.itemInformation.washAndCare && (
                 <Box display="flex" flexDirection="row" alignItems="center">
-                  <Typography variant="subtitle1">Wash & Care</Typography>
+                  <Typography variant="subtitle1" flexWrap={'nowrap'}>Wash & Care</Typography>
                   <Box flexGrow={1} />
                   <Typography variant="subtitle1">
                     {data.itemInformation.washAndCare}
