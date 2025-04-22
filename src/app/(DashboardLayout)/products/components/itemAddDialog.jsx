@@ -436,14 +436,19 @@ export const ItemAddDialog = ({
                               COLOR : {item.variantColor.toUpperCase()}
                             </Typography>
                             <Box display="flex" flexDirection="row" gap={2}>
-                              <Button
-                                variant="outlined"
-                                onClick={() =>
-                                  handleOpenCloseImgDialog(item.variantColor)
-                                }
-                              >
-                                Add Images
-                              </Button>
+                              {images.filter(
+                                (img) => img.color === item.variantColor
+                              ).length < 5 && (
+                                <Button
+                                  variant="outlined"
+                                  onClick={() =>
+                                    handleOpenCloseImgDialog(item.variantColor)
+                                  }
+                                >
+                                  Add Images
+                                </Button>
+                              )}
+
                               <Button
                                 variant="outlined"
                                 onClick={() => handleOpenCloseSizeDialog(index)}

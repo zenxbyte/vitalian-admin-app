@@ -84,7 +84,7 @@ const DropFileContainer = ({ open, onClose, onSave, color, type = "item" }) => {
               <input
                 type="file"
                 hidden
-                accept="image/*"
+                accept=".jpg,.jpeg,.png"
                 onChange={handleFileChange}
               />
             </Button>

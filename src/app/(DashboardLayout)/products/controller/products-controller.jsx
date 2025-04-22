@@ -13,7 +13,10 @@ import responseUtil from "@/utils/responseUtil";
 import commonUtil from "@/utils/common-util";
 import { NAVIGATION_ROUTES } from "@/navigation/navigationRoutes";
 import { ProductsView } from "../view/products-view.jsx";
-import { SNACKBAR_VARIANT } from "@/constants/snackbar-constants.js";
+import {
+  SNACKBAR_MESSAGE,
+  SNACKBAR_VARIANT,
+} from "@/constants/snackbar-constants.js";
 
 const validationSchemaCreate = Yup.object().shape({
   catName: Yup.string().required("Category Name is required"),
@@ -39,17 +42,21 @@ const validationSchemaItem = Yup.object({
     .min(0, "Discount cannot be negative")
     .max(100, "Discount cannot be greater than 100"),
 
-  itemVariants: Yup.array().of(
-    Yup.object().shape({
-      variantColor: Yup.string().required("Image color is required"),
-      variantSizes: Yup.array().of(
-        Yup.object().shape({
-          size: Yup.string().required("Size is required"),
-          quantity: Yup.number().required("Quantity is required"),
-        })
-      ),
-    })
-  ),
+  itemVariants: Yup.array()
+    .of(
+      Yup.object().shape({
+        variantColor: Yup.string().required("Image color is required"),
+        variantSizes: Yup.array()
+          .of(
+            Yup.object().shape({
+              size: Yup.string().required("Size is required"),
+              quantity: Yup.number().required("Quantity is required"),
+            })
+          )
+          .required(),
+      })
+    )
+    .required(),
   itemInformationSchema: Yup.object().shape({
     material: Yup.string().max(100, "Material cannot exceed 100 characters"),
     fitType: Yup.string().max(50, "Fit type cannot exceed 50 characters"),
@@ -251,6 +258,39 @@ const ProductsController = () => {
     }
   };
 
+  const calculateTotalSize = () => {
+    let totalSize = 0;
+
+    // Calculate images size
+    images.forEach((item) => {
+      if (item.file) {
+        totalSize += item.file.size;
+      }
+    });
+
+    // Add size chart if exists
+    if (sizeChart?.file) {
+      totalSize += sizeChart.file.size;
+    }
+
+    // Add video clip if exists
+    if (videoClip?.file) {
+      totalSize += videoClip.file.size;
+    }
+
+    return totalSize; // Returns size in bytes
+  };
+
+  const validateAllVariantsHaveSizes = (variants) => {
+    if (!variants || variants.length === 0) {
+      return false; // No variants at all
+    }
+
+    return variants.every(
+      (variant) => variant.variantSizes && variant.variantSizes.length > 0
+    );
+  };
+
   const handleAddItem = async () => {
     commonUtil.validateFormik(formikAddItem);
 
@@ -261,7 +301,26 @@ const ProductsController = () => {
       images.length === 0 ||
       formikAddItem.values.itemVariants.length === 0
     ) {
-      enqueueSnackbar("Images required", { variant: SNACKBAR_VARIANT.WARNING });
+      enqueueSnackbar("Images required for all variants", {
+        variant: SNACKBAR_VARIANT.WARNING,
+      });
+      return;
+    }
+
+    if (!validateAllVariantsHaveSizes(formikAddItem.values.itemVariants)) {
+      enqueueSnackbar("Please add at least one size for each color variant", {
+        variant: SNACKBAR_VARIANT.WARNING,
+      });
+      return;
+    }
+
+    const totalFileSize = calculateTotalSize();
+
+    const MAX_SIZE = 20 * 1024 * 1024; // 20MB in bytes
+    if (totalFileSize > MAX_SIZE) {
+      enqueueSnackbar("Total File Size should not exceed 20MB", {
+        variant: SNACKBAR_VARIANT.WARNING,
+      });
       return;
     }
 
@@ -304,6 +363,10 @@ const ProductsController = () => {
         .finally(() => {
           setIsLoadingAddItem(false);
         });
+    } else {
+      enqueueSnackbar(SNACKBAR_MESSAGE.FILL_REQUIRED_FIELDS, {
+        variant: SNACKBAR_VARIANT.ERROR,
+      });
     }
   };
 
