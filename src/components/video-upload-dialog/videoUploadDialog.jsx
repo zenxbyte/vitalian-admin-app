@@ -40,7 +40,11 @@ export const VideoUploadDialog = ({
     <Dialog open={isOpen}>
       <DialogTitle>Upload Video Clip</DialogTitle>
       <DialogContent>
-        <input type="file" accept="video/*" onChange={handleFileChange} />
+        <input
+          type="file"
+          accept="video/mp4"
+          onChange={handleFileChange}
+        />
         {preview && (
           <video
             src={preview?.url}
