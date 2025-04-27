@@ -403,6 +403,8 @@ export const ItemUpdateDialog = ({
               <TextField
                 name="itemInformation.washAndCare"
                 label="Wash & Care"
+                multiline={true}
+                rows={6}
                 fullWidth
                 {...getFieldProps("itemInformation.washAndCare")}
               />
