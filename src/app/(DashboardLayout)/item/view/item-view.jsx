@@ -318,7 +318,7 @@ export const ItemView = ({
                 <Box display="flex" flexDirection="row" alignItems="center">
                   <Typography variant="subtitle1" flexWrap={'nowrap'}>Wash & Care</Typography>
                   <Box flexGrow={1} />
-                  <Typography variant="subtitle1">
+                  <Typography variant="subtitle1" whiteSpace='pre-line'>
                     {data.itemInformation.washAndCare}
                   </Typography>
                 </Box>
